@@ -41,16 +41,15 @@ interface HistoryItem {
 const MyDramaApp = () => {
   const [loading, setLoading] = useState(true);
   const [showApp, setShowApp] = useState(false);
-  // Tipizzazione corretta con le interfacce
+  // TIPIZZAZIONE CORRETTA DELLE VARIABILI DI STATO:
   const [projects, setProjects] = useState<Project[]>([]);
-  const [currentPage, setCurrentPage] = useState('home');
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null); // Ora tipizzato
-  const [favorites, setFavorites] = useState<string[]>([]); // Presumo che gli ID siano stringhe
-  // Tipizzazione corretta
+  const [currentPage, setCurrentPage] = useState<string>('home'); // Tipizzato come stringa
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [favorites, setFavorites] = useState<string[]>([]);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [playing, setPlaying] = useState<Project | null>(null); // Ora tipizzato
+  const [playing, setPlaying] = useState<Project | null>(null);
   const [currentEpisode, setCurrentEpisode] = useState(0);
   const [muted, setMuted] = useState(false);
   const [showNextButton, setShowNextButton] = useState(false);
@@ -60,7 +59,8 @@ const MyDramaApp = () => {
   const [duration, setDuration] = useState(0);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [focusedMenu, setFocusedMenu] = useState(0);
-  // Tipizzazione corretta per gli elementi video
+  
+  // CORREZIONE DEFINITIVA PER videoRef (che causava l'errore 'never'):
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const preloaderVideoRef = useRef<HTMLVideoElement | null>(null);
   const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -133,7 +133,7 @@ const MyDramaApp = () => {
             return;
  }
           // Correzione TS18047: 'document.activeElement' è nullabile.
-          // Inoltre, tipizziamo `document.activeElement`
+          // In questo blocco stiamo passando al menu, non al progetto.
           if (document.activeElement && document.activeElement.tagName !== 'INPUT') {
             const item = menuItems[focusedMenu];
  if (item) {
@@ -172,11 +172,10 @@ const MyDramaApp = () => {
   }, []);
 
   useEffect(() => {
-    // Usiamo il tipo corretto e verifichiamo che `playing` non sia nullo
+    // 'video' viene correttamente tipizzato grazie alla useRef sopra.
     if (videoRef.current && playing) {
       const video = videoRef.current;
       
-      // Tipizziamo l'evento video usando i tipi nativi di HTMLVideoElement
       const handleTimeUpdate = () => {
         setCurrentTime(video.currentTime);
         const timeLeft = video.duration - video.currentTime;
@@ -194,7 +193,6 @@ const MyDramaApp = () => {
         setDuration(video.duration);
       };
       
-      // La tipizzazione di videoRef risolve gli errori su addEventListener/removeEventListener
       video.addEventListener('timeupdate', handleTimeUpdate);
       video.addEventListener('loadedmetadata', handleLoadedMetadata);
       return () => {
@@ -236,26 +234,26 @@ const MyDramaApp = () => {
  }
   };
 
-  // Tipizzazione dell'evento click per la barra di scorrimento (HTMLDivElement)
+  // Tipizzazione corretta dell'evento
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
- const pos = (e.clientX - rect.left) / rect.width;
+    const pos = (e.clientX - rect.left) / rect.width;
     if (videoRef.current) {
       videoRef.current.currentTime = pos * duration;
  }
   };
 
-  // Tipizzazione implicita 'any' risolta definendo che 'seconds' è number
+  // Tipizzazione corretta del parametro
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
- const secs = Math.floor(seconds % 60);
+    const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   const loadProjects = async () => {
     try {
       const response = await fetch('https://raw.githubusercontent.com/mydramasubita-boop/listaprogettimydramafansub/refs/heads/main/metadati_fansub_test.json');
-      // Aggiungiamo un casting per maggiore sicurezza se il JSON è complesso
+      // Casting esplicito
       const data: Project[] = await response.json(); 
       setProjects(data);
     } catch (error) {
@@ -287,7 +285,7 @@ const MyDramaApp = () => {
     }
   };
   
-  // Tipizzazione di projectId
+  // Tipizzazione corretta di projectId
   const toggleFavorite = (projectId: string) => {
     const newFavorites = favorites.includes(projectId)
       ?
@@ -297,14 +295,14 @@ const MyDramaApp = () => {
     localStorage.setItem('mydrama_favorites', JSON.stringify(newFavorites));
   };
   
-  // Tipizzazione del parametro project
+  // Tipizzazione corretta del parametro project
   const addToHistory = (project: Project, episodeIndex = 0) => {
     const newHistory = [
       // L'id_progetto viene ora trattato come stringa
       { projectId: project.id_progetto, episodeIndex, timestamp: Date.now() },
       ...history.filter(h => h.projectId !== project.id_progetto)
     ].slice(0, 20);
- setHistory(newHistory);
+    setHistory(newHistory);
     localStorage.setItem('mydrama_history', JSON.stringify(newHistory));
   };
 
@@ -313,7 +311,7 @@ const MyDramaApp = () => {
     localStorage.setItem('mydrama_history', JSON.stringify([]));
   };
   
-  // Tipizzazione del parametro projectId
+  // Tipizzazione corretta del parametro projectId
   const removeFromHistory = (projectId: string) => {
     const newHistory = history.filter(h => h.projectId !== projectId);
     setHistory(newHistory);
@@ -331,27 +329,27 @@ const MyDramaApp = () => {
     // La tipizzazione di playing risolve gli errori di accesso a video_data e episodi
     if (playing && playing.video_data.episodi && currentEpisode < playing.video_data.episodi.length - 1) {
       setCurrentEpisode(currentEpisode + 1);
- setShowNextButton(false);
+      setShowNextButton(false);
       addToHistory(playing, currentEpisode + 1);
     }
   };
 
   const prevEpisode = () => {
-    if (currentEpisode > 0) {
+    if (playing && currentEpisode > 0) { // Aggiunto check 'playing'
       setCurrentEpisode(currentEpisode - 1);
- setShowNextButton(false);
+      setShowNextButton(false);
       addToHistory(playing, currentEpisode - 1);
     }
   };
 
-  const getFilteredProjects = () => {
+  const getFilteredProjects = (): Project[] => { // Tipo di ritorno esplicito
     let filtered = projects;
-    // L'array latestByCategory è ora implicito come Project[]
- if (currentPage === 'home') {
+    // L'array latestByCategory è ora esplicitamente tipizzato come Project[]
+    if (currentPage === 'home') {
       // Mostra ultimi 6 progetti per ogni macrocategoria
       const categories = ['film', 'drama', 'mini e web drama', 'altro'];
-      // Variabile `latestByCategory` è ora tipizzata (implicita Project[])
- const latestByCategory: Project[] = []; 
+      // Variabile `latestByCategory` è ora tipizzata
+      const latestByCategory: Project[] = []; 
       
       categories.forEach(cat => {
         const categoryProjects = projects
@@ -359,50 +357,51 @@ const MyDramaApp = () => {
           .slice(0, 6); // Primi 6 = più recenti
         latestByCategory.push(...categoryProjects);
       });
- return latestByCategory;
+      return latestByCategory;
     } else if (currentPage === 'favorites') {
       // favorites è tipizzato come string[], id_progetto come stringa
       filtered = filtered.filter(p => favorites.includes(p.id_progetto));
- } else if (currentPage === 'history') {
+    } else if (currentPage === 'history') {
       // history è tipizzato come HistoryItem[]
       const historyIds = history.map(h => h.projectId);
- filtered = filtered.filter(p => historyIds.includes(p.id_progetto));
+      // CORREZIONE: Mappa i progetti in base alla cronologia, non solo filtra
+      filtered = history.map(h => projects.find(p => p.id_progetto === h.projectId)).filter((p): p is Project => p !== undefined);
     } else if (currentPage === 'film') {
       filtered = filtered.filter(p => p.macro_categoria === 'film');
- } else if (currentPage === 'drama') {
+    } else if (currentPage === 'drama') {
       filtered = filtered.filter(p => p.macro_categoria === 'drama');
- } else if (currentPage === 'mini') {
+    } else if (currentPage === 'mini') {
       filtered = filtered.filter(p => p.macro_categoria === 'mini e web drama');
- } else if (currentPage === 'altro') {
+    } else if (currentPage === 'altro') {
       filtered = filtered.filter(p => p.macro_categoria === 'altro');
- }
+    }
 
     if (selectedCategory) {
       filtered = filtered.filter(p => p.sub_categoria === selectedCategory);
- }
+    }
 
     if (searchQuery) {
       filtered = filtered.filter(p =>
         p.titolo.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        // I parametri generi e attori sono tipizzati come string[]
+        // Tipizzazione in linea (g e a sono stringhe)
         p.generi.some((g: string) => g.toLowerCase().includes(searchQuery.toLowerCase())) ||
         p.attori.some((a: string) => a.toLowerCase().includes(searchQuery.toLowerCase()))
       );
- }
+    }
 
     return filtered;
   };
 
   const getAllSubCategories = () => {
-    const subCategoriesByMacro = {
+    const subCategoriesByMacro: { [key: string]: string[] } = { // Tipizzazione esplicita
       'film': ['Cina', 'Corea', 'Giappone', 'Hong Kong', 'Taiwan', 'Thailandia'],
       'drama': ['Cina', 'Corea', 'Giappone', 'Hong Kong', 'Taiwan', 'Thailandia'],
       'mini e web drama': ['Cina', 'Corea', 'Giappone', 'Hong Kong', 'Taiwan', 'Thailandia'],
       'altro': ['Cortometraggi', 'Teaser Trailer', 'Pubblicità']
     };
- if (currentPage === 'film') return subCategoriesByMacro['film'];
+    if (currentPage === 'film') return subCategoriesByMacro['film'];
     if (currentPage === 'drama') return subCategoriesByMacro['drama'];
- if (currentPage === 'mini') return subCategoriesByMacro['mini e web drama'];
+    if (currentPage === 'mini') return subCategoriesByMacro['mini e web drama'];
     if (currentPage === 'altro') return subCategoriesByMacro['altro'];
     
     return [];
@@ -416,7 +415,7 @@ const MyDramaApp = () => {
   // RENDERIZZAZIONE
   // ===========================================
   
- if (loading) {
+  if (loading) {
     return (
       <div style={{
         width: '100%',
@@ -438,11 +437,11 @@ const MyDramaApp = () => {
           }}
           // Tipizzazione dell'evento video (React.SyntheticEvent<HTMLVideoElement>)
           onTimeUpdate={(e: React.SyntheticEvent<HTMLVideoElement>) => {
-            const video = e.target as HTMLVideoElement; // Casting
+            const video = e.target as HTMLVideoElement; // Casting per l'elemento video
  
             const timeLeft = video.duration - video.currentTime;
             if (timeLeft <= 0.75 && timeLeft > 0) {
-              // Correzione TS2339: style esiste su HTMLVideoElement
+              // La proprietà video.style esiste su HTMLVideoElement
               video.style.opacity = (timeLeft / 0.75).toString(); 
             }
           }}
@@ -457,7 +456,7 @@ const MyDramaApp = () => {
  }
 
   if (playing) {
-    // Le proprietà video_data e episodi esistono grazie alla tipizzazione di `playing`
+    // La tipizzazione di 'playing' come Project | null garantisce che video_data esista qui.
     const videoUrl = playing.video_data.is_serie
       ?
  playing.video_data.episodi![currentEpisode].url_video // Usiamo ! per asserire che esiste
@@ -843,12 +842,12 @@ const MyDramaApp = () => {
               
               <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', flexWrap: 'wrap' }}>
               
-             {selectedProject.generi.map((genere: string, i: number) => ( // Tipizzazione di genere e i
+             {selectedProject.generi.map((genere: string, i: number) => ( // Tipizzazione corretta in linea
                   <span
                     key={i}
                     onClick={() => {
                       setSearchQuery(genere);
- setCurrentPage('search');
+                      setCurrentPage('search');
                       setSelectedProject(null);
                     }}
                     style={{
@@ -877,13 +876,13 @@ const MyDramaApp = () => {
                 <h3 style={{ fontSize: '28px', marginBottom: '20px', opacity: 0.9 }}>Cast:</h3>
       
                 <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-                  {selectedProject.attori.map((attore: string, i: number) => ( // Tipizzazione di attore e i
+                  {selectedProject.attori.map((attore: string, i: number) => ( // Tipizzazione corretta in linea
                     <span
                       key={i}
                    
                       onClick={() => {
                         setSearchQuery(attore);
- setCurrentPage('search');
+                        setCurrentPage('search');
                         setSelectedProject(null);
                       }}
                       style={{
@@ -969,7 +968,7 @@ const MyDramaApp = () => {
               <h2 style={{ fontSize: '44px', marginBottom: '35px', textShadow: '0 4px 20px rgba(0,0,0,0.9)' }}>Episodi</h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '30px' }}>
                 {selectedProject.video_data.episodi.map((ep: Episodio, 
- i: number) => ( // Tipizzazione di ep e i
+ i: number) => ( // Tipizzazione corretta in linea
                   <button
                     key={i}
                     onClick={() => playVideo(selectedProject, i)}
@@ -1056,9 +1055,9 @@ const MyDramaApp = () => {
   
             {menuItems.map((item, index) => {
               const Icon = item.icon;
- const isFocused = focusedMenu === index;
+              const isFocused = focusedMenu === index;
               const isActive = currentPage === item.id;
- return (
+              return (
                 <button
                   key={item.id}
                   onClick={() => {
@@ -1098,7 +1097,7 @@ const MyDramaApp = () => {
                   <span style={{ fontSize: '13px', textAlign: 'center' }}>{item.label}</span>
                 </button>
               );
- })}
+            })}
           </nav>
         </header>
 
@@ -1141,7 +1140,7 @@ const MyDramaApp = () => {
                 placeholder="Cerca per titolo, genere o attore..."
                 value={searchQuery}
         
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)} // Tipizzazione dell'evento change
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)} // Tipizzazione corretta
                 style={{
                   width: '100%',
                   maxWidth: '800px',
@@ -1249,12 +1248,12 @@ const MyDramaApp = () => {
             gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
             gap: '35px'
           }}>
-            {getFilteredProjects().map((project: Project, index: number) => {
+            {getFilteredProjects().map((project: Project, index: number) => { // Tipizzazione Project[] corretta
           
               const isFocused = focusedIndex === index;
               // La proprietà generi esiste grazie alla tipizzazione di `project`
               const isOnAir = project.generi.some(g => g.toLowerCase() === 'onair' || g.toLowerCase() === 'on air');
- return (
+              return (
                 <div
                   key={project.id_progetto}
                   style={{
@@ -1333,8 +1332,8 @@ const MyDramaApp = () => {
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
                       <div style={{ fontSize: '14px', opacity: 0.7, flex: 1 }}>
               
-                        {project.generi.filter(g => g.toLowerCase() !== 'onair' && g.toLowerCase() !== 'on air').slice(0, 2).join(', ')}
-                        {project.generi.filter(g => g.toLowerCase() !== 'onair' && g.toLowerCase() !== 'on air').length > 2 && '...'}
+                        {project.generi.filter((g: string) => g.toLowerCase() !== 'onair' && g.toLowerCase() !== 'on air').slice(0, 2).join(', ')}
+                        {project.generi.filter((g: string) => g.toLowerCase() !== 'onair' && g.toLowerCase() !== 'on air').length > 2 && '...'}
                       </div>
                     
                     {isOnAir && (
@@ -1355,7 +1354,7 @@ const MyDramaApp = () => {
   
                 </div>
               );
- })}
+            })}
           </div>
 
           {getFilteredProjects().length === 0 && (
