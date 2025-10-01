@@ -1,0 +1,21 @@
+{
+  "name": "My Drama Life TV",
+  "short_name": "Drama TV",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#FF0000",
+  "icons": [
+    {
+      "src": "/icona_app_mobile.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icona_app_tv.png",
+      "sizes": "1024x1024",
+      "type": "image/png", // <== CORRETTO! Deve essere "image/png"
+      "purpose": "maskable"
+    }
+  ]
+}
