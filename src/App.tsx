@@ -1400,7 +1400,7 @@ const MyDramaApp = () => {
         </footer>
       </div>
     </div>
-  );
+  ); 
 };
 
 export default MyDramaApp;
