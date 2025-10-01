@@ -1,0 +1,10 @@
+{
+  "background_color": "#1b1b1b",
+  "display": "standalone",
+  "name": "My Drama Life TV",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "My Drama Life TV",
+  "start_url": "/",
+  "theme_color": "#e02484"
+}
