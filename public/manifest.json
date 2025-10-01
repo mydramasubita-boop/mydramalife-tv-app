@@ -2,11 +2,11 @@
   "name": "My Drama Life TV",
   "short_name": "MyDrama",
   "start_url": "/",
-  "display": "standalone",
-  "background_color": "#1b1b1b",
-  "theme_color": "#e02484",
+  "display": "fullscreen",
+  "background_color": "#000000",
+  "theme_color": "#ff1493",
   "orientation": "landscape",
-  "description": "L'app di My Drama Life Fansub",
+  "description": "Watch your favorite dramas on TV",
   "icons": [
     {
       "src": "/icona_app_mobile.png",
