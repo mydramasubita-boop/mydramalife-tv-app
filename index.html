@@ -4,23 +4,45 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
-    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#000000" />
+    <title>MyDrama TV App</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTXlEcmFtYSBUViBBcHAiLCJzaG9ydF9uYW1lIjoiTXlEcmFtYSIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMDAwMDAwIiwidGhlbWVfY29sb3IiOiIjMWExYTFhIiwib3JpZW50YXRpb24iOiJsYW5kc2NhcGUiLCJpY29ucyI6W3sic3JjIjoiL2ljb25hX2FwcF9tb2JpbGUucG5nIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3BuZyIsInB1cnBvc2UiOiJhbnkgbWFza2FibGUifSx7InNyYyI6Ii9pY29uYV9hcHBfdHYucG5nIiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL3BuZyIsInB1cnBvc2UiOiJhbnkgbWFza2FibGUifV19" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-
     <script>
+      // Registra service worker inline
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/sw.js').then(function(registration) {
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-          }, function(err) {
-            console.log('ServiceWorker registration failed: ', err);
-          });
+        window.addEventListener('load', () => {
+          const swCode = `
+            const CACHE_NAME = 'tv-app-v1';
+            
+            self.addEventListener('install', (e) => {
+              console.log('[SW] Install');
+              self.skipWaiting();
+            });
+            
+            self.addEventListener('activate', (e) => {
+              console.log('[SW] Activate');
+              e.waitUntil(self.clients.claim());
+            });
+            
+            self.addEventListener('fetch', (e) => {
+              e.respondWith(
+                caches.match(e.request).then(r => r || fetch(e.request))
+              );
+            });
+          `;
+          
+          const blob = new Blob([swCode], { type: 'application/javascript' });
+          const swUrl = URL.createObjectURL(blob);
+          
+          navigator.serviceWorker.register(swUrl)
+            .then(reg => console.log('SW registered:', reg.scope))
+            .catch(err => console.log('SW error:', err));
         });
       }
     </script>
-    </body>
+  </body>
 </html>
