@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Heart, Home, Clock, Film, Tv, Monitor, Clapperboard, Search, Play, ChevronLeft, Volume2, VolumeX, SkipBack, SkipForward } from 'lucide-react';
 
+// Funzione per forzare orientamento landscape
+const lockOrientation = () => {
+  if (screen.orientation && screen.orientation.lock) {
+    screen.orientation.lock('landscape').catch(() => {});
+  }
+};
+
 // ===========================================
 // DEFINIZIONE DELLE INTERFACCE (Correzione TS)
 // ===========================================
@@ -83,6 +90,18 @@ const MyDramaApp = () => {
     { id: 'search', label: 'Cerca', icon: Search }
   ];
 
+  // Forza landscape e gestisce fullscreen
+  useEffect(() => {
+    lockOrientation();
+    window.addEventListener('load', lockOrientation);
+    document.addEventListener('fullscreenchange', lockOrientation);
+    
+    return () => {
+      window.removeEventListener('load', lockOrientation);
+      document.removeEventListener('fullscreenchange', lockOrientation);
+    };
+  }, []);
+
   useEffect(() => {
     // Tipizzazione dell'evento da tastiera (KeyboardEvent)
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -106,8 +125,7 @@ const MyDramaApp = () => {
           if (selectedProject) {
             return;
           }
-          setFocusedMenu(prev => Math.min(menuItems.length - 1, 
- prev + 1));
+          setFocusedMenu(prev => Math.min(menuItems.length - 1, prev + 1));
           break;
         
         case 'ArrowLeft':
@@ -125,39 +143,39 @@ const MyDramaApp = () => {
             return;
           }
           setFocusedIndex(prev => Math.min(totalItems - 1, prev + 1));
- break;
+          break;
         
         case 'Enter':
           e.preventDefault();
- if (selectedProject) {
+          if (selectedProject) {
             return;
- }
+          }
           // Correzione TS18047: 'document.activeElement' è nullabile.
           // In questo blocco stiamo passando al menu, non al progetto.
           if (document.activeElement && document.activeElement.tagName !== 'INPUT') {
             const item = menuItems[focusedMenu];
- if (item) {
+            if (item) {
               setCurrentPage(item.id);
               setSelectedCategory(null);
               setSearchQuery('');
               setFocusedIndex(0);
- }
+            }
           }
           break;
- case 'Escape':
+        case 'Escape':
         case 'Backspace':
           e.preventDefault();
- if (selectedProject) {
+          if (selectedProject) {
             setSelectedProject(null);
- } else if (currentPage !== 'home') {
+          } else if (currentPage !== 'home') {
             setCurrentPage('home');
- }
+          }
           break;
       }
     };
     
     window.addEventListener('keydown', handleKeyDown);
- return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [loading, playing, selectedProject, focusedMenu, focusedIndex, currentPage]);
 
   useEffect(() => {
@@ -184,8 +202,7 @@ const MyDramaApp = () => {
         if (timeLeft <= 20 && timeLeft > 0) {
           const episodes = playing.video_data.episodi;
           if (episodes && currentEpisode < episodes.length - 1) {
-  
-           setShowNextButton(true);
+            setShowNextButton(true);
           }
         }
       };
@@ -197,8 +214,7 @@ const MyDramaApp = () => {
       video.addEventListener('loadedmetadata', handleLoadedMetadata);
       return () => {
         video.removeEventListener('timeupdate', handleTimeUpdate);
-        video.removeEventListener('loadedmetadata', 
- handleLoadedMetadata);
+        video.removeEventListener('loadedmetadata', handleLoadedMetadata);
       };
     }
   }, [playing, currentEpisode]);
@@ -227,11 +243,11 @@ const MyDramaApp = () => {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
- } else {
+      } else {
         videoRef.current.play();
       }
       setIsPlaying(!isPlaying);
- }
+    }
   };
 
   // Tipizzazione corretta dell'evento
@@ -240,7 +256,7 @@ const MyDramaApp = () => {
     const pos = (e.clientX - rect.left) / rect.width;
     if (videoRef.current) {
       videoRef.current.currentTime = pos * duration;
- }
+    }
   };
 
   // Tipizzazione corretta del parametro
@@ -251,25 +267,25 @@ const MyDramaApp = () => {
   };
 
   const loadProjects = async () => {
-  console.log('Inizio caricamento progetti...');
-  try {
-    const response = await fetch('https://raw.githubusercontent.com/mydramasubita-boop/listaprogettimydramafansub/refs/heads/main/metadati_fansub_test.json');
-    console.log('Response ricevuta:', response.status);
-    const data = await response.json();
-    console.log('Dati parsati:', data.length, 'progetti');
-    setProjects(data);
-  } catch (error) {
-    console.error('Errore caricamento:', error);
-  }
-};
+    console.log('Inizio caricamento progetti...');
+    try {
+      const response = await fetch('https://raw.githubusercontent.com/mydramasubita-boop/listaprogettimydramafansub/refs/heads/main/metadati_fansub_test.json');
+      console.log('Response ricevuta:', response.status);
+      const data = await response.json();
+      console.log('Dati parsati:', data.length, 'progetti');
+      setProjects(data);
+    } catch (error) {
+      console.error('Errore caricamento:', error);
+    }
+  };
 
   const loadFavorites = () => {
     const saved = localStorage.getItem('mydrama_favorites');
- if (saved) {
+    if (saved) {
       try {
         // Tipizzazione di favorites come string[]
         setFavorites(JSON.parse(saved) as string[]);
- } catch (e) {
+      } catch (e) {
         setFavorites([]);
       }
     }
@@ -277,11 +293,11 @@ const MyDramaApp = () => {
 
   const loadHistory = () => {
     const saved = localStorage.getItem('mydrama_history');
- if (saved) {
+    if (saved) {
       try {
         // Tipizzazione di history come HistoryItem[]
         setHistory(JSON.parse(saved) as HistoryItem[]);
- } catch (e) {
+      } catch (e) {
         setHistory([]);
       }
     }
@@ -290,8 +306,7 @@ const MyDramaApp = () => {
   // Tipizzazione corretta di projectId
   const toggleFavorite = (projectId: string) => {
     const newFavorites = favorites.includes(projectId)
-      ?
- favorites.filter(id => id !== projectId)
+      ? favorites.filter(id => id !== projectId)
       : [...favorites, projectId];
     setFavorites(newFavorites);
     localStorage.setItem('mydrama_favorites', JSON.stringify(newFavorites));
@@ -318,13 +333,24 @@ const MyDramaApp = () => {
     const newHistory = history.filter(h => h.projectId !== projectId);
     setHistory(newHistory);
     localStorage.setItem('mydrama_history', JSON.stringify(newHistory));
- };
+  };
 
   const playVideo = (project: Project, episodeIndex = 0) => {
     setPlaying(project);
     setCurrentEpisode(episodeIndex);
     addToHistory(project, episodeIndex);
     setShowNextButton(false);
+    
+    // Forza landscape quando parte il video
+    setTimeout(() => {
+      lockOrientation();
+      if (videoRef.current) {
+        const elem = videoRef.current.parentElement;
+        if (elem && elem.requestFullscreen) {
+          elem.requestFullscreen().catch(() => {});
+        }
+      }
+    }, 100);
   };
 
   const nextEpisode = () => {
@@ -429,7 +455,6 @@ const MyDramaApp = () => {
         <video
           ref={preloaderVideoRef}
           autoPlay
-       
           muted
           playsInline
           style={{
@@ -437,31 +462,27 @@ const MyDramaApp = () => {
             height: '100%',
             objectFit: 'cover'
           }}
-          // Tipizzazione dell'evento video (React.SyntheticEvent<HTMLVideoElement>)
           onTimeUpdate={(e: React.SyntheticEvent<HTMLVideoElement>) => {
-            const video = e.target as HTMLVideoElement; // Casting per l'elemento video
- 
+            const video = e.target as HTMLVideoElement;
             const timeLeft = video.duration - video.currentTime;
+            // Fade out negli ultimi 0.75 secondi
             if (timeLeft <= 0.75 && timeLeft > 0) {
-              // La proprietà video.style esiste su HTMLVideoElement
-              video.style.opacity = (timeLeft / 0.75).toString(); 
+              video.style.opacity = (timeLeft / 0.75).toString();
             }
           }}
           onEnded={() => setLoading(false)}
-          onError={() => 
- setLoading(false)}
+          onError={() => setLoading(false)}
         >
           <source src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/PRELOADER.mp4" type="video/mp4" />
         </video>
       </div>
     );
- }
+  }
 
   if (playing) {
     // La tipizzazione di 'playing' come Project | null garantisce che video_data esista qui.
     const videoUrl = playing.video_data.is_serie
-      ?
- playing.video_data.episodi![currentEpisode].url_video // Usiamo ! per asserire che esiste
+      ? playing.video_data.episodi![currentEpisode].url_video // Usiamo ! per asserire che esiste
       : playing.video_data.url_video;
 
     return (
@@ -474,8 +495,7 @@ const MyDramaApp = () => {
         }}
         onMouseMove={handleMouseMove}
         onClick={() => setShowControls(true)}
-      
- >
+      >
         <video
           ref={videoRef}
           src={videoUrl}
@@ -485,8 +505,7 @@ const MyDramaApp = () => {
           onClick={togglePlayPause}
         />
         
-        <div 
- style={{
+        <div style={{
           position: 'absolute',
           top: 0,
           left: 0,
@@ -494,7 +513,6 @@ const MyDramaApp = () => {
           bottom: 0,
           background: showControls ? 'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.7) 100%)' : 'transparent',
           pointerEvents: showControls ? 'auto' : 'none',
-      
           transition: 'background 0.3s ease',
           opacity: showControls ? 1 : 0
         }}>
@@ -503,29 +521,25 @@ const MyDramaApp = () => {
             position: 'absolute',
             top: '30px',
             left: '40px',
-       
-             right: '40px',
+            right: '40px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             pointerEvents: 'all'
           }}>
             <button
-              onClick={() => { setPlaying(null);
- setShowNextButton(false); setIsPlaying(true); }}
+              onClick={() => { setPlaying(null); setShowNextButton(false); setIsPlaying(true); }}
               style={{
                 padding: '18px 35px',
                 background: 'rgba(0,0,0,0.8)',
                 border: `2px solid ${colors.primary}`,
                 borderRadius: '12px',
-             
                 color: 'white',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
                 fontSize: '20px',
                 cursor: 'pointer',
-           
                 fontWeight: 'bold'
               }}
             >
@@ -534,14 +548,12 @@ const MyDramaApp = () => {
 
             {playing.video_data.is_serie && playing.video_data.episodi && (
               <div style={{
-          
                 background: 'rgba(0,0,0,0.8)',
                 padding: '15px 30px',
                 borderRadius: '12px',
                 fontSize: '20px',
                 fontWeight: 'bold'
               }}>
-          
                 {playing.video_data.episodi[currentEpisode].titolo_episodio}
               </div>
             )}
@@ -549,23 +561,21 @@ const MyDramaApp = () => {
             <button
               onClick={() => {
                 setMuted(!muted);
- if (videoRef.current) {
+                if (videoRef.current) {
                   // La proprietà muted esiste grazie alla tipizzazione di videoRef
                   videoRef.current.muted = !muted;
- }
+                }
               }}
               style={{
                 padding: '18px',
                 background: 'rgba(0,0,0,0.8)',
                 border: `2px solid ${colors.primary}`,
                 borderRadius: '12px',
-  
                 color: 'white',
                 cursor: 'pointer'
               }}
             >
-              {muted ?
- <VolumeX size={24} /> : <Volume2 size={24} />}
+              {muted ? <VolumeX size={24} /> : <Volume2 size={24} />}
             </button>
           </div>
 
@@ -574,46 +584,39 @@ const MyDramaApp = () => {
             position: 'absolute',
             top: '50%',
             left: '50%',
-       
-             transform: 'translate(-50%, -50%)',
+            transform: 'translate(-50%, -50%)',
             pointerEvents: 'all'
           }}>
             <button
               onClick={togglePlayPause}
               style={{
                 width: '80px',
-             
                 height: '80px',
                 background: 'rgba(0,0,0,0.6)',
                 border: `3px solid ${colors.primary}`,
                 borderRadius: '50%',
                 color: 'white',
                 cursor: 'pointer',
-         
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                opacity: isPlaying && showControls ?
- 0.7 : 1,
+                opacity: isPlaying && showControls ? 0.7 : 1,
                 transition: 'opacity 0.3s'
               }}
             >
-              {isPlaying ?
- (
+              {isPlaying ? (
                 <div style={{ display: 'flex', gap: '6px' }}>
                   <div style={{ width: '8px', height: '32px', background: 'white', borderRadius: '2px' }} />
                   <div style={{ width: '8px', height: '32px', background: 'white', borderRadius: '2px' }} />
                 </div>
-    
-           ) : (
+              ) : (
                 <Play size={36} fill="white" style={{ marginLeft: '4px' }} />
               )}
             </button>
           </div>
 
           {/* Controlli inferiori - Barra di scorrimento e episodi */}
-          
- <div style={{
+          <div style={{
             position: 'absolute',
             bottom: '30px',
             left: '40px',
@@ -621,54 +624,45 @@ const MyDramaApp = () => {
             pointerEvents: 'all'
           }}>
             {/* Barra di scorrimento */}
-        
-          <div style={{ marginBottom: '20px' }}>
+            <div style={{ marginBottom: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '10px' }}>
                 <span style={{ fontSize: '16px', fontWeight: 'bold', minWidth: '60px' }}>
                   {formatTime(currentTime)}
                 </span>
-          
-              <div
+                <div
                   onClick={handleSeek}
                   style={{
                     flex: 1,
                     height: '8px',
-                
                     background: 'rgba(255,255,255,0.3)',
                     borderRadius: '4px',
                     cursor: 'pointer',
                     position: 'relative'
                   }}
-              
-           >
+                >
                   <div style={{
                     width: `${(currentTime / duration) * 100}%`,
                     height: '100%',
                     background: `linear-gradient(90deg, ${colors.primary}, ${colors.secondary})`,
-          
                     borderRadius: '4px',
                     position: 'relative'
                   }}>
                     <div style={{
                       position: 'absolute',
-      
                       right: '-6px',
                       top: '50%',
                       transform: 'translateY(-50%)',
                       width: '16px',
-              
                       height: '16px',
                       background: 'white',
                       borderRadius: '50%',
                       boxShadow: '0 2px 8px rgba(0,0,0,0.5)'
-                   
-                   }} />
+                    }} />
                   </div>
                 </div>
                 <span style={{ fontSize: '16px', fontWeight: 'bold', minWidth: '60px' }}>
                   {formatTime(duration)}
                 </span>
-      
               </div>
             </div>
 
@@ -676,30 +670,25 @@ const MyDramaApp = () => {
             {playing.video_data.is_serie && playing.video_data.episodi && (
               <div style={{
                 display: 'flex',
-                
- gap: '20px',
+                gap: '20px',
                 justifyContent: 'center',
                 flexWrap: 'wrap'
               }}>
                 {currentEpisode > 0 && (
                   <button
-             
-                        onClick={prevEpisode}
+                    onClick={prevEpisode}
                     style={{
                       padding: '18px 35px',
                       background: 'rgba(0,0,0,0.8)',
                       border: `2px solid ${colors.primary}`,
- 
                       borderRadius: '12px',
                       color: 'white',
                       display: 'flex',
                       alignItems: 'center',
-         
                       gap: '12px',
                       fontSize: '18px',
                       cursor: 'pointer',
                       fontWeight: 'bold'
-                 
                     }}
                   >
                     <SkipBack size={20} /> Precedente
