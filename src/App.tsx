@@ -251,15 +251,17 @@ const MyDramaApp = () => {
   };
 
   const loadProjects = async () => {
-    try {
-      const response = await fetch('https://raw.githubusercontent.com/mydramasubita-boop/listaprogettimydramafansub/refs/heads/main/metadati_fansub_test.json');
-      // Casting esplicito
-      const data: Project[] = await response.json(); 
-      setProjects(data);
-    } catch (error) {
-      console.error('Errore caricamento:', error);
- }
-  };
+  console.log('Inizio caricamento progetti...');
+  try {
+    const response = await fetch('https://raw.githubusercontent.com/mydramasubita-boop/listaprogettimydramafansub/refs/heads/main/metadati_fansub_test.json');
+    console.log('Response ricevuta:', response.status);
+    const data = await response.json();
+    console.log('Dati parsati:', data.length, 'progetti');
+    setProjects(data);
+  } catch (error) {
+    console.error('Errore caricamento:', error);
+  }
+};
 
   const loadFavorites = () => {
     const saved = localStorage.getItem('mydrama_favorites');
