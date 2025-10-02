@@ -695,31 +695,26 @@ const MyDramaApp = () => {
                   </button>
                 )}
 
-                {currentEpisode < playing.video_data.episodi.length - 1 && 
- (
+                {currentEpisode < playing.video_data.episodi.length - 1 && (
                   <button
                     onClick={nextEpisode}
                     style={{
                       padding: '18px 35px',
-                  
                       background: 'rgba(0,0,0,0.8)',
                       border: `2px solid ${colors.primary}`,
                       borderRadius: '12px',
                       color: 'white',
                       display: 'flex',
- 
                       alignItems: 'center',
                       gap: '12px',
                       fontSize: '18px',
                       cursor: 'pointer',
-         
                       fontWeight: 'bold'
                     }}
                   >
                     Successivo <SkipForward size={20} />
                   </button>
-       
-           )}
+                )}
               </div>
             )}
           </div>
@@ -727,34 +722,29 @@ const MyDramaApp = () => {
           {/* Pulsante "Vai all'episodio successivo" a 20 secondi dalla fine */}
           {showNextButton && playing.video_data.is_serie && playing.video_data.episodi && currentEpisode < playing.video_data.episodi.length - 1 && (
             <div style={{
-  
               position: 'absolute',
               bottom: '140px',
               right: '40px',
               pointerEvents: 'all'
             }}>
               <button
-                
- onClick={nextEpisode}
+                onClick={nextEpisode}
                 style={{
                   padding: '20px 40px',
                   background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
                   border: 'none',
                   borderRadius: '12px',
-     
                   color: 'white',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '15px',
                   fontSize: '20px',
-          
                   cursor: 'pointer',
                   fontWeight: 'bold',
                   animation: 'pulse 1.5s infinite',
                   boxShadow: `0 0 30px ${colors.primary}`
                 }}
-             
-                 >
+              >
                 Vai all'episodio successivo <SkipForward size={24} />
               </button>
             </div>
@@ -763,15 +753,13 @@ const MyDramaApp = () => {
 
         <style>{`
           @keyframes pulse {
-            0%, 100% 
- { transform: scale(1); }
-            50% { transform: scale(1.05);
- }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
           }
         `}</style>
       </div>
     );
- }
+  }
 
   if (selectedProject) {
     return (
@@ -785,23 +773,20 @@ const MyDramaApp = () => {
         color: 'white',
         position: 'relative',
         overflowY: 'auto'
-   
-     }}>
+      }}>
         <div style={{ position: 'relative', zIndex: 2, padding: '60px' }}>
           <button
             onClick={() => setSelectedProject(null)}
             style={{
               padding: '25px 45px',
               background: 'rgba(0,0,0,0.95)',
-              
- border: `3px solid ${colors.primary}`,
+              border: `3px solid ${colors.primary}`,
               borderRadius: '15px',
               color: 'white',
               display: 'flex',
               alignItems: 'center',
               gap: '15px',
               fontSize: '26px',
-       
               cursor: 'pointer',
               marginBottom: '50px',
               fontWeight: 'bold'
@@ -810,15 +795,13 @@ const MyDramaApp = () => {
             <ChevronLeft size={32} /> Indietro
           </button>
 
-          <div style={{ display: 'flex', gap: 
- '60px', marginBottom: '60px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '60px', marginBottom: '60px', flexWrap: 'wrap' }}>
             <img
               src={selectedProject.url_poster_verticale}
               alt={selectedProject.titolo}
               style={{
                 width: '400px',
                 height: '600px',
-       
                 objectFit: 'cover',
                 borderRadius: '20px',
                 boxShadow: `0 30px 80px rgba(255,20,147,0.5)`
@@ -826,14 +809,12 @@ const MyDramaApp = () => {
             />
 
             <div style={{ flex: 1, minWidth: '400px' }}>
-         
               <h1 style={{ fontSize: '64px', marginBottom: '30px', lineHeight: '1.2', textShadow: '0 4px 20px rgba(0,0,0,0.9)' }}>
                 {selectedProject.titolo}
               </h1>
               
               <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', flexWrap: 'wrap' }}>
-              
-             {selectedProject.generi.map((genere: string, i: number) => ( // Tipizzazione corretta in linea
+                {selectedProject.generi.map((genere: string, i: number) => ( // Tipizzazione corretta in linea
                   <span
                     key={i}
                     onClick={() => {
@@ -845,12 +826,10 @@ const MyDramaApp = () => {
                       padding: '15px 30px',
                       background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
                       borderRadius: '30px',
-      
                       fontSize: '20px',
                       cursor: 'pointer',
                       fontWeight: 'bold',
                       boxShadow: '0 4px 15px rgba(0,0,0,0.3)'
-           
                     }}
                   >
                     {genere}
@@ -858,19 +837,16 @@ const MyDramaApp = () => {
                 ))}
               </div>
 
-     
               <p style={{ fontSize: '24px', lineHeight: '1.8', marginBottom: '40px', textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}>
                 {selectedProject.descrizione}
               </p>
 
               <div style={{ marginBottom: '30px' }}>
                 <h3 style={{ fontSize: '28px', marginBottom: '20px', opacity: 0.9 }}>Cast:</h3>
-      
                 <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
                   {selectedProject.attori.map((attore: string, i: number) => ( // Tipizzazione corretta in linea
                     <span
                       key={i}
-                   
                       onClick={() => {
                         setSearchQuery(attore);
                         setCurrentPage('search');
@@ -879,126 +855,104 @@ const MyDramaApp = () => {
                       style={{
                         padding: '12px 25px',
                         background: 'rgba(255,20,147,0.9)',
-                        borderRadius: 
- '10px',
+                        borderRadius: '10px',
                         fontSize: '18px',
                         cursor: 'pointer',
                         fontWeight: 'bold',
-                        boxShadow: 
- '0 4px 15px rgba(0,0,0,0.3)'
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.3)'
                       }}
                     >
                       {attore}
                     </span>
-             
-               ))}
+                  ))}
                 </div>
               </div>
 
               <div style={{ display: 'flex', gap: '25px', marginTop: '40px', flexWrap: 'wrap' }}>
                 <button
                   onClick={() => toggleFavorite(selectedProject.id_progetto)}
-     
                   style={{
                     padding: '22px 45px',
                     background: favorites.includes(selectedProject.id_progetto) 
-                      ?
- `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`
+                      ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`
                       : 'rgba(255,255,255,0.15)',
                     border: `3px solid ${colors.primary}`,
                     borderRadius: '15px',
                     color: 'white',
-          
                     display: 'flex',
                     alignItems: 'center',
                     gap: '15px',
                     fontSize: '22px',
                     cursor: 'pointer',
-     
                     fontWeight: 'bold'
                   }}
                 >
-                  <Heart size={28} fill={favorites.includes(selectedProject.id_progetto) ?
- 'white' : 'none'} />
-                  {favorites.includes(selectedProject.id_progetto) ?
- 'Rimuovi' : 'Aggiungi'}
+                  <Heart size={28} fill={favorites.includes(selectedProject.id_progetto) ? 'white' : 'none'} />
+                  {favorites.includes(selectedProject.id_progetto) ? 'Rimuovi' : 'Aggiungi'}
                 </button>
 
                 {!selectedProject.video_data.is_serie && (
                   <button
                     onClick={() => playVideo(selectedProject)}
                     style={{
-    
                       padding: '28px 65px',
                       background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
                       border: 'none',
                       borderRadius: '15px',
-         
                       color: 'white',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '20px',
-                 
                       fontSize: '30px',
                       cursor: 'pointer',
                       fontWeight: 'bold',
                       boxShadow: `0 15px 50px rgba(255,20,147,0.6)`
                     }}
-  
-                 >
+                  >
                     <Play size={36} fill="white" /> GUARDA
                   </button>
                 )}
               </div>
-            
- </div>
+            </div>
           </div>
 
           {selectedProject.video_data.is_serie && selectedProject.video_data.episodi && (
             <div>
               <h2 style={{ fontSize: '44px', marginBottom: '35px', textShadow: '0 4px 20px rgba(0,0,0,0.9)' }}>Episodi</h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '30px' }}>
-                {selectedProject.video_data.episodi.map((ep: Episodio, 
- i: number) => ( // Tipizzazione corretta in linea
+                {selectedProject.video_data.episodi.map((ep: Episodio, i: number) => ( // Tipizzazione corretta in linea
                   <button
                     key={i}
                     onClick={() => playVideo(selectedProject, i)}
                     style={{
-                 
                       padding: '30px',
                       background: 'rgba(26,26,26,0.95)',
                       border: `3px solid ${colors.primary}`,
                       borderRadius: '15px',
-                      color: 
- 'white',
+                      color: 'white',
                       textAlign: 'left',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
-        
                       gap: '25px',
                       fontSize: '24px',
                       fontWeight: 'bold',
                       transition: 'all 0.3s'
-               
                     }}
                   >
                     <div style={{
                       width: '60px',
                       height: '60px',
-          
                       background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
                       borderRadius: '50%',
                       display: 'flex',
                       alignItems: 'center',
-                
                       justifyContent: 'center',
                       flexShrink: 0
                     }}>
                       <Play size={32} fill="white" />
                     </div>
-     
-                       <span>{ep.titolo_episodio}</span>
+                    <span>{ep.titolo_episodio}</span>
                   </button>
                 ))}
               </div>
@@ -1006,8 +960,7 @@ const MyDramaApp = () => {
           )}
         </div>
       </div>
- 
-     );
+    );
   }
 
   return (
@@ -1023,8 +976,7 @@ const MyDramaApp = () => {
       transition: 'opacity 0.5s ease-in'
     }}>
       <div style={{ position: 'relative', zIndex: 1 }}>
-   
-            <header style={{
+        <header style={{
           padding: '20px 60px',
           display: 'flex',
           alignItems: 'center',
@@ -1033,8 +985,7 @@ const MyDramaApp = () => {
           backdropFilter: 'blur(10px)',
           borderBottom: `4px solid ${colors.primary}`,
           flexWrap: 'wrap',
-   
-            gap: '30px'
+          gap: '30px'
         }}>
           <img 
             src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/logo.svg"
@@ -1043,7 +994,6 @@ const MyDramaApp = () => {
           />
 
           <nav style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-  
             {menuItems.map((item, index) => {
               const Icon = item.icon;
               const isFocused = focusedMenu === index;
@@ -1054,37 +1004,31 @@ const MyDramaApp = () => {
                   onClick={() => {
                     setCurrentPage(item.id);
                     setSelectedCategory(null);
-     
                     setSearchQuery('');
                     setFocusedIndex(0);
                   }}
                   style={{
                     padding: '12px 16px',
-       
                     background: isActive 
                       ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})` 
                       : 'transparent',
                     border: 'none',
-               
                     outline: 'none',
                     borderRadius: '10px',
                     color: 'white',
                     display: 'flex',
                     flexDirection: 'column',
-          
                     alignItems: 'center',
                     gap: '6px',
                     cursor: 'pointer',
                     fontWeight: 'bold',
                     transform: isFocused ? 'scale(1.05)' : 'scale(1)',
- 
                     transition: 'all 0.2s',
                     minWidth: '80px',
                     boxShadow: 'none'
                   }}
                 >
-   
-                <Icon size={28} />
+                  <Icon size={28} />
                   <span style={{ fontSize: '13px', textAlign: 'center' }}>{item.label}</span>
                 </button>
               );
@@ -1097,14 +1041,12 @@ const MyDramaApp = () => {
             <div style={{
               display: 'flex',
               alignItems: 'center',
-            
               justifyContent: 'center',
               minHeight: '80px',
               marginBottom: '20px'
             }}>
               <h1 style={{ fontSize: '38px', textShadow: '0 4px 20px rgba(0,0,0,0.9)', margin: 0 }}>
                 Ultime uscite
-             
               </h1>
             </div>
           )}
@@ -1113,8 +1055,7 @@ const MyDramaApp = () => {
             <div style={{
               minHeight: '80px',
               marginBottom: '20px'
-            
- }} />
+            }} />
           )}
 
           {currentPage === 'search' && (
@@ -1123,27 +1064,23 @@ const MyDramaApp = () => {
               alignItems: 'center',
               justifyContent: 'center',
               minHeight: '80px',
-  
               marginBottom: '20px'
             }}>
               <input
                 type="text"
                 placeholder="Cerca per titolo, genere o attore..."
                 value={searchQuery}
-        
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)} // Tipizzazione corretta
                 style={{
                   width: '100%',
                   maxWidth: '800px',
                   padding: '25px',
-                 
                   fontSize: '24px',
                   background: 'rgba(26,26,26,0.9)',
                   border: `3px solid ${colors.primary}`,
                   borderRadius: '15px',
                   color: 'white',
                   outline: 'none'
- 
                 }}
               />
             </div>
@@ -1152,7 +1089,6 @@ const MyDramaApp = () => {
           {currentPage === 'history' && history.length > 0 && (
             <div style={{
               display: 'flex',
-   
               alignItems: 'center',
               justifyContent: 'center',
               minHeight: '80px',
@@ -1160,20 +1096,17 @@ const MyDramaApp = () => {
             }}>
               <button
                 onClick={clearHistory}
- 
                 style={{
                   padding: '12px 24px',
                   background: colors.primary,
                   border: 'none',
                   borderRadius: '10px',
-        
                   color: 'white',
                   fontSize: '16px',
                   cursor: 'pointer',
                   fontWeight: 'bold'
                 }}
               >
-  
                 Cancella Cronologia
               </button>
             </div>
@@ -1182,55 +1115,46 @@ const MyDramaApp = () => {
           {['film', 'drama', 'mini', 'altro'].includes(currentPage) && (
             <div style={{
               display: 'flex',
-      
               alignItems: 'center',
               justifyContent: 'center',
               minHeight: '80px',
               marginBottom: '20px'
             }}>
               <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
-          
-              <button
+                <button
                   onClick={() => setSelectedCategory(null)}
                   style={{
                     padding: '12px 24px',
-                    background: !selectedCategory ?
- colors.primary : 'rgba(26,26,26,0.9)',
+                    background: !selectedCategory ? colors.primary : 'rgba(26,26,26,0.9)',
                     border: 'none',
                     borderRadius: '10px',
                     color: 'white',
                     fontSize: '16px',
-              
                     cursor: 'pointer',
                     fontWeight: 'bold'
                   }}
                 >
                   Tutte
                 </button>
-    
                 {getSubCategories().map((cat: string) => (
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
                     style={{
-      
                       padding: '12px 24px',
                       background: selectedCategory === cat ? colors.primary : 'rgba(26,26,26,0.9)',
                       border: 'none',
                       borderRadius: '10px',
-       
                       color: 'white',
                       fontSize: '16px',
                       cursor: 'pointer',
                       fontWeight: 'bold'
-               
                     }}
                   >
                     {cat}
                   </button>
                 ))}
               </div>
-         
             </div>
           )}
 
@@ -1240,7 +1164,6 @@ const MyDramaApp = () => {
             gap: '35px'
           }}>
             {getFilteredProjects().map((project: Project, index: number) => { // Tipizzazione Project[] corretta
-          
               const isFocused = focusedIndex === index;
               // La proprietà generi esiste grazie alla tipizzazione di `project`
               const isOnAir = project.generi.some(g => g.toLowerCase() === 'onair' || g.toLowerCase() === 'on air');
@@ -1250,99 +1173,80 @@ const MyDramaApp = () => {
                   style={{
                     background: 'rgba(26,26,26,0.9)',
                     borderRadius: '15px',
-     
                     overflow: 'hidden',
                     cursor: 'pointer',
                     transition: 'all 0.3s',
                     transform: isFocused ? 'scale(1.1)' : 'scale(1)',
-                
                     boxShadow: isFocused ? `0 0 30px ${colors.primary}` : 'none',
                     border: `3px solid ${isFocused ? colors.primary : 'transparent'}`
                   }}
                   onClick={() => setSelectedProject(project)}
                 >
-       
                   <div style={{ position: 'relative' }}>
                     <img
                       src={project.url_poster_verticale}
                       alt={project.titolo}
-                     
                       style={{
                         width: '100%',
                         height: '375px',
                         objectFit: 'cover'
                       }}
-  
                     />
                     
                     <button
                       onClick={(e) => {
-                  
                         e.stopPropagation();
                         toggleFavorite(project.id_progetto);
                       }}
                       style={{
                         position: 'absolute',
                         top: '15px',
-                    
                         left: '15px',
                         background: 'rgba(0,0,0,0.8)',
                         border: 'none',
                         borderRadius: '50%',
-                    
                         width: '50px',
                         height: '50px',
                         display: 'flex',
                         alignItems: 'center',
-                    
                         justifyContent: 'center',
                         cursor: 'pointer',
                         zIndex: 2
                       }}
                     >
-   
-                       <Heart
+                      <Heart
                         size={24}
-                        fill={favorites.includes(project.id_progetto) ?
- colors.primary : 'none'}
-                        color={favorites.includes(project.id_progetto) ?
- colors.primary : 'white'}
+                        fill={favorites.includes(project.id_progetto) ? colors.primary : 'none'}
+                        color={favorites.includes(project.id_progetto) ? colors.primary : 'white'}
                       />
                     </button>
                   </div>
 
                   <div style={{ padding: '20px' }}>
-                
                     <h3 style={{ fontSize: '20px', marginBottom: '12px', lineHeight: '1.3' }}>
                       {project.titolo}
                     </h3>
                     <div style={{ fontSize: '14px', opacity: 0.7, marginBottom: '8px' }}>
-                  
                       {project.macro_categoria} • {project.sub_categoria}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
                       <div style={{ fontSize: '14px', opacity: 0.7, flex: 1 }}>
-              
                         {project.generi.filter((g: string) => g.toLowerCase() !== 'onair' && g.toLowerCase() !== 'on air').slice(0, 2).join(', ')}
                         {project.generi.filter((g: string) => g.toLowerCase() !== 'onair' && g.toLowerCase() !== 'on air').length > 2 && '...'}
                       </div>
-                    
-                    {isOnAir && (
+                      {isOnAir && (
                         <div style={{
                           color: '#FF0000',
                           fontWeight: 'bold',
-                 
                           fontSize: '16px',
                           textTransform: 'uppercase',
                           letterSpacing: '1px'
                         }}>
-            
                           ONAIR
                         </div>
                       )}
                     </div>
                   </div>
-  
                 </div>
               );
             })}
@@ -1354,21 +1258,18 @@ const MyDramaApp = () => {
               padding: '80px 20px',
               display: 'flex',
               flexDirection: 'column',
-  
               alignItems: 'center',
               gap: '30px'
             }}>
               <img 
                 src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/No_Found_loop.gif"
                 alt="Nessun contenuto"
-            
                 style={{
                   width: '300px',
                   height: 'auto',
                   borderRadius: '15px'
                 }}
               />
-         
               <p style={{ fontSize: '28px', fontWeight: 'bold', opacity: 0.8 }}>
                 Ci dispiace, non c'è nulla da vedere qui
               </p>
@@ -1377,8 +1278,7 @@ const MyDramaApp = () => {
         </main>
 
         <footer style={{
-          padding: 
- '50px',
+          padding: '50px',
           textAlign: 'center',
           borderTop: '2px solid rgba(255,255,255,0.1)',
           marginTop: '80px',
@@ -1386,8 +1286,7 @@ const MyDramaApp = () => {
         }}>
           <p style={{ opacity: 0.6, fontSize: '18px' }}>
             My Drama Life TV © 2025 all right reserved - Created by gswebagency.net
-      
-           </p>
+          </p>
         </footer>
       </div>
     </div>
