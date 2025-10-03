@@ -413,51 +413,47 @@ const MyDramaApp = () => {
 
 if (loading) {
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      width: '100vw',
-      height: '100vh',
-      background: '#000',
-      overflow: 'hidden',
-      margin: 0,
-      padding: 0
-    }}>
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        width: '100vw',          // usa vw invece di % per essere sicuri
+        height: '100vh',         // usa vh non dvh - dvh non è supportato ovunque
+        background: '#000',
+        overflow: 'hidden',
+        padding: 0,
+        margin: 0
+      }}
+    >
       <video
         ref={preloaderVideoRef}
         autoPlay
         muted
         playsInline
+        preload="auto"
         style={{
           position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          minWidth: '100%',
-          minHeight: '100%',
-          width: 'auto',
-          height: 'auto',
-          objectFit: 'cover'
-        }}
-        onTimeUpdate={(e: React.SyntheticEvent<HTMLVideoElement>) => {
-          const video = e.target as HTMLVideoElement;
-          const timeLeft = video.duration - video.currentTime;
-          if (timeLeft <= 0.75 && timeLeft > 0) {
-            video.style.opacity = (timeLeft / 0.75).toString();
-          }
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          display: 'block',
+          backgroundColor: '#000'  // aggiungi sfondo nero al video stesso
         }}
         onEnded={() => setLoading(false)}
         onError={() => setLoading(false)}
+        onTimeUpdate={(e) => {
+          const v = e.currentTarget;
+          const tLeft = v.duration - v.currentTime;
+          if (tLeft <= 0.75 && tLeft > 0) v.style.opacity = String(tLeft / 0.75);
+        }}
       >
         <source src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/PRELOADER.mp4" type="video/mp4" />
       </video>
     </div>
   );
 }
-
 if (playing) {
 
   if (playing) {
