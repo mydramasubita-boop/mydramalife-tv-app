@@ -310,22 +310,28 @@ const MyDramaApp = () => {
   };
 
   const playVideo = (project: Project, episodeIndex = 0) => {
-    setPlaying(project);
-    setCurrentEpisode(episodeIndex);
-    addToHistory(project, episodeIndex);
-    setShowNextButton(false);
+  setPlaying(project);
+  setCurrentEpisode(episodeIndex);
+  addToHistory(project, episodeIndex);
+  setShowNextButton(false);
+  
+  // Forza landscape e fullscreen più aggressivamente
+  setTimeout(() => {
+    lockOrientation();
     
-    // Forza landscape quando parte il video
-    setTimeout(() => {
-      lockOrientation();
-      if (videoRef.current) {
-        const elem = videoRef.current.parentElement;
-        if (elem && elem.requestFullscreen) {
-          elem.requestFullscreen().catch(() => {});
-        }
+    // Prova a mettere in fullscreen l'intero documento
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
+    
+    // Se non funziona, prova con il video stesso
+    if (videoRef.current) {
+      if (videoRef.current.requestFullscreen) {
+        videoRef.current.requestFullscreen().catch(() => {});
       }
-    }, 100);
-  };
+    }
+  }, 100);
+};
 
   const nextEpisode = () => {
     if (playing && playing.video_data.episodi && currentEpisode < playing.video_data.episodi.length - 1) {
