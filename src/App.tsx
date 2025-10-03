@@ -63,7 +63,10 @@ const MyDramaApp = () => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [focusedIndex, setFocusedIndex] = useState(0);
+  
+  // NUOVI STATI PER NAVIGAZIONE TV
+  const [focusZone, setFocusZone] = useState<'menu' | 'content'>('menu');
+  const [focusedCardIndex, setFocusedCardIndex] = useState(0);
   const [focusedMenu, setFocusedMenu] = useState(0);
   
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -100,48 +103,82 @@ const MyDramaApp = () => {
     };
   }, []);
 
+  // NAVIGAZIONE TV COMPLETA
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (loading || playing) return;
 
       const filteredProjects = getFilteredProjects();
-      const totalItems = filteredProjects.length;
+      const totalCards = filteredProjects.length;
+      const cardsPerRow = 4;
+
+      if (selectedProject) {
+        if (e.key === 'Escape' || e.key === 'Backspace') {
+          e.preventDefault();
+          setSelectedProject(null);
+          setFocusZone('content');
+        }
+        return;
+      }
 
       switch(e.key) {
         case 'ArrowUp':
           e.preventDefault();
-          if (selectedProject) return;
-          setFocusedMenu(prev => Math.max(0, prev - 1));
+          if (focusZone === 'content') {
+            if (focusedCardIndex < cardsPerRow) {
+              setFocusZone('menu');
+            } else {
+              setFocusedCardIndex(Math.max(0, focusedCardIndex - cardsPerRow));
+            }
+          }
           break;
         
         case 'ArrowDown':
           e.preventDefault();
-          if (selectedProject) return;
-          setFocusedMenu(prev => Math.min(menuItems.length - 1, prev + 1));
+          if (focusZone === 'menu') {
+            setFocusZone('content');
+            setFocusedCardIndex(0);
+          } else if (focusZone === 'content') {
+            const newIndex = focusedCardIndex + cardsPerRow;
+            if (newIndex < totalCards) {
+              setFocusedCardIndex(newIndex);
+            }
+          }
           break;
         
         case 'ArrowLeft':
           e.preventDefault();
-          if (selectedProject) return;
-          setFocusedIndex(prev => Math.max(0, prev - 1));
+          if (focusZone === 'menu') {
+            setFocusedMenu(prev => Math.max(0, prev - 1));
+          } else if (focusZone === 'content') {
+            setFocusedCardIndex(prev => Math.max(0, prev - 1));
+          }
           break;
         
         case 'ArrowRight':
           e.preventDefault();
-          if (selectedProject) return;
-          setFocusedIndex(prev => Math.min(totalItems - 1, prev + 1));
+          if (focusZone === 'menu') {
+            setFocusedMenu(prev => Math.min(menuItems.length - 1, prev + 1));
+          } else if (focusZone === 'content') {
+            setFocusedCardIndex(prev => Math.min(totalCards - 1, prev + 1));
+          }
           break;
         
         case 'Enter':
           e.preventDefault();
-          if (selectedProject) return;
-          if (document.activeElement && document.activeElement.tagName !== 'INPUT') {
+          if (focusZone === 'menu') {
             const item = menuItems[focusedMenu];
             if (item) {
               setCurrentPage(item.id);
               setSelectedCategory(null);
               setSearchQuery('');
-              setFocusedIndex(0);
+              setFocusZone('content');
+              setFocusedCardIndex(0);
+            }
+          } else if (focusZone === 'content') {
+            const project = filteredProjects[focusedCardIndex];
+            if (project) {
+              setSelectedProject(project);
             }
           }
           break;
@@ -149,10 +186,9 @@ const MyDramaApp = () => {
         case 'Escape':
         case 'Backspace':
           e.preventDefault();
-          if (selectedProject) {
-            setSelectedProject(null);
-          } else if (currentPage !== 'home') {
+          if (focusZone === 'content' && currentPage !== 'home') {
             setCurrentPage('home');
+            setFocusZone('menu');
           }
           break;
       }
@@ -160,7 +196,7 @@ const MyDramaApp = () => {
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [loading, playing, selectedProject, focusedMenu, focusedIndex, currentPage]);
+  }, [loading, playing, selectedProject, focusedMenu, focusedCardIndex, currentPage, focusZone]);
 
   useEffect(() => {
     loadProjects();
@@ -310,28 +346,25 @@ const MyDramaApp = () => {
   };
 
   const playVideo = (project: Project, episodeIndex = 0) => {
-  setPlaying(project);
-  setCurrentEpisode(episodeIndex);
-  addToHistory(project, episodeIndex);
-  setShowNextButton(false);
-  
-  // Forza landscape e fullscreen più aggressivamente
-  setTimeout(() => {
-    lockOrientation();
+    setPlaying(project);
+    setCurrentEpisode(episodeIndex);
+    addToHistory(project, episodeIndex);
+    setShowNextButton(false);
     
-    // Prova a mettere in fullscreen l'intero documento
-    if (document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen().catch(() => {});
-    }
-    
-    // Se non funziona, prova con il video stesso
-    if (videoRef.current) {
-      if (videoRef.current.requestFullscreen) {
-        videoRef.current.requestFullscreen().catch(() => {});
+    setTimeout(() => {
+      lockOrientation();
+      
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
       }
-    }
-  }, 100);
-};
+      
+      if (videoRef.current) {
+        if (videoRef.current.requestFullscreen) {
+          videoRef.current.requestFullscreen().catch(() => {});
+        }
+      }
+    }, 100);
+  };
 
   const nextEpisode = () => {
     if (playing && playing.video_data.episodi && currentEpisode < playing.video_data.episodi.length - 1) {
@@ -411,47 +444,47 @@ const MyDramaApp = () => {
     return getAllSubCategories();
   };
 
-if (loading) {
-  return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        width: '100vw',
-        height: '100vh',
-        background: '#000',
-        overflow: 'hidden'
-      }}
-    >
-      <video
-        ref={preloaderVideoRef}
-        autoPlay
-        muted
-        playsInline
+  if (loading) {
+    return (
+      <div
         style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          display: 'block'
+          position: 'fixed',
+          inset: 0,
+          width: '100vw',
+          height: '100vh',
+          background: '#000',
+          overflow: 'hidden'
         }}
-        onTimeUpdate={(e: React.SyntheticEvent<HTMLVideoElement>) => {
-          const video = e.target as HTMLVideoElement;
-          const timeLeft = video.duration - video.currentTime;
-          if (timeLeft <= 0.75 && timeLeft > 0) {
-            video.style.opacity = (timeLeft / 0.75).toString();
-          }
-        }}
-        onEnded={() => setLoading(false)}
-        onError={() => setLoading(false)}
       >
-        <source src="/preloader.mp4" type="video/mp4" />
-      </video>
-    </div>
-  );
-}
+        <video
+          ref={preloaderVideoRef}
+          autoPlay
+          muted
+          playsInline
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: 'block'
+          }}
+          onTimeUpdate={(e: React.SyntheticEvent<HTMLVideoElement>) => {
+            const video = e.target as HTMLVideoElement;
+            const timeLeft = video.duration - video.currentTime;
+            if (timeLeft <= 0.75 && timeLeft > 0) {
+              video.style.opacity = (timeLeft / 0.75).toString();
+            }
+          }}
+          onEnded={() => setLoading(false)}
+          onError={() => setLoading(false)}
+        >
+          <source src="/preloader.mp4" type="video/mp4" />
+        </video>
+      </div>
+    );
+  }
   
   if (playing) {
     const videoUrl = playing.video_data.is_serie
@@ -789,14 +822,14 @@ if (loading) {
                       setSelectedProject(null);
                     }}
                     style={{
-                      padding: '15px 30px',
-                      background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
-                      borderRadius: '30px',
-                      fontSize: '20px',
-                      cursor: 'pointer',
-                      fontWeight: 'bold',
-                      boxShadow: '0 4px 15px rgba(0,0,0,0.3)'
-                    }}
+  padding: '15px 30px',
+  background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
+  borderRadius: '30px',
+  fontSize: '20px',
+  cursor: 'pointer',
+  fontWeight: 'bold',
+  boxShadow: '0 4px 15px rgba(0,0,0,0.3)'
+}}
                   >
                     {genere}
                   </span>
@@ -950,7 +983,7 @@ if (loading) {
           background: 'rgba(0,0,0,0.95)',
           backdropFilter: 'blur(10px)',
           borderBottom: `4px solid ${colors.primary}`,
-          flexWrap: 'wrap',
+          flexWrap: 'nowrap',
           gap: '30px'
         }}>
           <img 
@@ -962,7 +995,7 @@ if (loading) {
           <nav style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             {menuItems.map((item, index) => {
               const Icon = item.icon;
-              const isFocused = focusedMenu === index;
+              const isFocused = focusZone === 'menu' && focusedMenu === index;
               const isActive = currentPage === item.id;
               return (
                 <button
@@ -971,14 +1004,15 @@ if (loading) {
                     setCurrentPage(item.id);
                     setSelectedCategory(null);
                     setSearchQuery('');
-                    setFocusedIndex(0);
+                    setFocusedCardIndex(0);
+                    setFocusZone('content');
                   }}
                   style={{
                     padding: '12px 16px',
                     background: isActive 
                       ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})` 
                       : 'transparent',
-                    border: 'none',
+                    border: isFocused ? `3px solid ${colors.primary}` : '3px solid transparent',
                     outline: 'none',
                     borderRadius: '10px',
                     color: 'white',
@@ -988,10 +1022,10 @@ if (loading) {
                     gap: '6px',
                     cursor: 'pointer',
                     fontWeight: 'bold',
-                    transform: isFocused ? 'scale(1.05)' : 'scale(1)',
+                    transform: isFocused ? 'scale(1.1)' : 'scale(1)',
                     transition: 'all 0.2s',
                     minWidth: '80px',
-                    boxShadow: 'none'
+                    boxShadow: isFocused ? `0 0 20px ${colors.primary}` : 'none'
                   }}
                 >
                   <Icon size={28} />
@@ -1130,7 +1164,7 @@ if (loading) {
             gap: '35px'
           }}>
             {getFilteredProjects().map((project: Project, index: number) => {
-              const isFocused = focusedIndex === index;
+              const isFocused = focusZone === 'content' && focusedCardIndex === index;
               const isOnAir = project.generi.some(g => g.toLowerCase() === 'onair' || g.toLowerCase() === 'on air');
               return (
                 <div
@@ -1141,9 +1175,10 @@ if (loading) {
                     overflow: 'hidden',
                     cursor: 'pointer',
                     transition: 'all 0.3s',
-                    transform: isFocused ? 'scale(1.1)' : 'scale(1)',
-                    boxShadow: isFocused ? `0 0 30px ${colors.primary}` : 'none',
-                    border: `3px solid ${isFocused ? colors.primary : 'transparent'}`
+                    transform: isFocused ? 'scale(1.15)' : 'scale(1)',
+                    boxShadow: isFocused ? `0 0 40px ${colors.primary}` : 'none',
+                    border: `3px solid ${isFocused ? colors.primary : 'transparent'}`,
+                    zIndex: isFocused ? 10 : 1
                   }}
                   onClick={() => setSelectedProject(project)}
                 >
@@ -1242,19 +1277,20 @@ if (loading) {
           )}
         </main>
 
-<footer style={{
-  padding: '20px 50px',
-  textAlign: 'center',
-  borderTop: '2px solid rgba(255,255,255,0.1)',
-  marginTop: '80px',
-  background: 'rgba(0,0,0,0.5)'
-}}>
-  <p style={{ opacity: 0.6, fontSize: '18px' }}>
-    My Drama Life TV © 2025 all right reserved - Created by gswebagency.net
-  </p>
-</footer>
+        <footer style={{
+          padding: '20px 50px',
+          textAlign: 'center',
+          borderTop: '2px solid rgba(255,255,255,0.1)',
+          marginTop: '80px',
+          background: 'rgba(0,0,0,0.5)'
+        }}>
+          <p style={{ opacity: 0.6, fontSize: '18px' }}>
+            My Drama Life TV © 2025 all right reserved - Created by gswebagency.net
+          </p>
+        </footer>
       </div>
     </div>
   );
 };
+
 export default MyDramaApp;
