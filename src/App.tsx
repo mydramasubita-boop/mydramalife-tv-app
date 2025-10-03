@@ -414,38 +414,16 @@ const MyDramaApp = () => {
 if (loading) {
   return (
     <div style={{
-      width: '100%',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
       height: '100vh',
       background: '#000',
       overflow: 'hidden',
-      position: 'fixed'  // cambia da 'relative' a 'fixed'
+      margin: 0,
+      padding: 0
     }}>
-      <video
-        ref={preloaderVideoRef}
-        autoPlay
-        muted
-        playsInline
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover'  // assicurati che sia 'cover' non 'contain'
-        }}
-        onTimeUpdate={(e: React.SyntheticEvent<HTMLVideoElement>) => {
-          const video = e.target as HTMLVideoElement;
-          const timeLeft = video.duration - video.currentTime;
-          if (timeLeft <= 0.75 && timeLeft > 0) {
-            video.style.opacity = (timeLeft / 0.75).toString();
-          }
-        }}
-        onEnded={() => setLoading(false)}
-        onError={() => setLoading(false)}
-      >
-        <source src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/PRELOADER.mp4" type="video/mp4" />
-      </video>
-    </div>
-  );
-}
-
   if (playing) {
     const videoUrl = playing.video_data.is_serie
       ? playing.video_data.episodi![currentEpisode].url_video
