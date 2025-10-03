@@ -1236,5 +1236,4 @@ if (playing) {
     </div>
   );
 };
-
 export default MyDramaApp;
