@@ -1242,17 +1242,17 @@ if (loading) {
           )}
         </main>
 
-        <footer style={{
-          padding: '50px',
-          textAlign: 'center',
-          borderTop: '2px solid rgba(255,255,255,0.1)',
-          marginTop: '80px',
-          background: 'rgba(0,0,0,0.5)'
-        }}>
-          <p style={{ opacity: 0.6, fontSize: '18px' }}>
-            My Drama Life TV © 2025 all right reserved - Created by gswebagency.net
-          </p>
-        </footer>
+<footer style={{
+  padding: '20px 50px',
+  textAlign: 'center',
+  borderTop: '2px solid rgba(255,255,255,0.1)',
+  marginTop: '80px',
+  background: 'rgba(0,0,0,0.5)'
+}}>
+  <p style={{ opacity: 0.6, fontSize: '18px' }}>
+    My Drama Life TV © 2025 all right reserved - Created by gswebagency.net
+  </p>
+</footer>
       </div>
     </div>
   );
