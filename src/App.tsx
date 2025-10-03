@@ -57,8 +57,6 @@ const MyDramaApp = () => {
   const [focusZone, setFocusZone] = useState<'menu' | 'content'>('menu');
   const [focusedCardIndex, setFocusedCardIndex] = useState(0);
   const [focusedMenu, setFocusedMenu] = useState(0);
-  
-  // NUOVI STATI PER DETTAGLIO
   const [detailFocusIndex, setDetailFocusIndex] = useState(0);
   
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -84,6 +82,13 @@ const MyDramaApp = () => {
     { id: 'search', label: 'Cerca', icon: Search }
   ];
 
+  // Calcola dinamicamente le card per riga
+  const getCardsPerRow = () => {
+    const containerWidth = window.innerWidth - 120; // padding laterale
+    const cardWidth = 250 + 35; // minWidth + gap
+    return Math.floor(containerWidth / cardWidth) || 1;
+  };
+
   useEffect(() => {
     lockOrientation();
     window.addEventListener('load', lockOrientation);
@@ -94,7 +99,6 @@ const MyDramaApp = () => {
     };
   }, []);
 
-  // NAVIGAZIONE PRINCIPALE
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (loading || playing) return;
@@ -118,14 +122,12 @@ const MyDramaApp = () => {
           case 'Enter':
             e.preventDefault();
             if (detailFocusIndex === 0) {
-              // Bottone Aggiungi o Guarda
               if (!selectedProject.video_data.is_serie) {
                 playVideo(selectedProject);
               } else {
                 toggleFavorite(selectedProject.id_progetto);
               }
             } else if (selectedProject.video_data.is_serie && selectedProject.video_data.episodi) {
-              // Episodio
               playVideo(selectedProject, detailFocusIndex - 1);
             }
             break;
@@ -147,14 +149,16 @@ const MyDramaApp = () => {
         }
       }
 
+      const cardsPerRow = getCardsPerRow();
+
       switch(e.key) {
         case 'ArrowUp':
           e.preventDefault();
           if (focusZone === 'content') {
-            if (focusedCardIndex === 0) {
+            if (focusedCardIndex < cardsPerRow) {
               setFocusZone('menu');
             } else {
-              setFocusedCardIndex(prev => Math.max(0, prev - 1));
+              setFocusedCardIndex(prev => Math.max(0, prev - cardsPerRow));
             }
           }
           break;
@@ -165,7 +169,7 @@ const MyDramaApp = () => {
             setFocusZone('content');
             setFocusedCardIndex(0);
           } else if (focusZone === 'content') {
-            setFocusedCardIndex(prev => Math.min(totalCards - 1, prev + 1));
+            setFocusedCardIndex(prev => Math.min(totalCards - 1, prev + cardsPerRow));
           }
           break;
         
@@ -204,14 +208,12 @@ const MyDramaApp = () => {
         enterPressStartRef.current = null;
 
         if (pressDuration >= 2000) {
-          // LONG PRESS - Toggle preferito
           const filteredProjects = getFilteredProjects();
           const project = filteredProjects[focusedCardIndex];
           if (project && focusZone === 'content' && !selectedProject) {
             toggleFavorite(project.id_progetto);
           }
         } else {
-          // SHORT PRESS - Apri dettaglio
           if (focusZone === 'menu') {
             const item = menuItems[focusedMenu];
             if (item) {
@@ -597,7 +599,7 @@ const MyDramaApp = () => {
             <div style={{ flex: 1, minWidth: '400px' }}>
               <h1 style={{ fontSize: '64px', marginBottom: '30px', lineHeight: '1.2', textShadow: '0 4px 20px rgba(0,0,0,0.9)' }}>{selectedProject.titolo}</h1>
               
-              <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', flexWrap: 'wrap' }}>
+             <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', flexWrap: 'wrap' }}>
                 {selectedProject.generi.map((genere: string, i: number) => (
                   <span key={i} onClick={() => { setSearchQuery(genere); setCurrentPage('search'); setSelectedProject(null); }} style={{ padding: '15px 30px', background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`, borderRadius: '30px', fontSize: '20px', cursor: 'pointer', fontWeight: 'bold', boxShadow: '0 4px 15px rgba(0,0,0,0.3)' }}>{genere}</span>
                 ))}
