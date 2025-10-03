@@ -449,7 +449,7 @@ if (loading) {
           if (tLeft <= 0.75 && tLeft > 0) v.style.opacity = String(tLeft / 0.75);
         }}
       >
-        <source src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/PRELOADER.mp4" type="video/mp4" />
+        <source src="/preloader.mp4" type="video/mp4" />
       </video>
     </div>
   );
