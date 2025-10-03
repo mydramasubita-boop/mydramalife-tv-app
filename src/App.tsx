@@ -430,8 +430,6 @@ if (loading) {
   );
 }
   
-if (playing) {
-
   if (playing) {
     const videoUrl = playing.video_data.is_serie
       ? playing.video_data.episodi![currentEpisode].url_video
