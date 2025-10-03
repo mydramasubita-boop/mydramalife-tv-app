@@ -570,8 +570,22 @@ const MyDramaApp = () => {
   return (
     <div style={{ width: '100%', minHeight: '100vh', background: `url(https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/background.png)`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', color: 'white', opacity: showApp ? 1 : 0, transition: 'opacity 0.5s ease-in' }}>
       <div style={{ position: 'relative', zIndex: 1 }}>
-        <header style={{ padding: '20px 60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(10px)', borderBottom: `4px solid ${colors.primary}`, flexWrap: 'nowrap', gap: '30px' }}>
-          <img src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/logo.svg" alt="My Drama Life" style={{ height: '80px', width: 'auto' }} />
+       <header style={{
+  padding: '20px 60px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  background: 'rgba(0,0,0,0.95)',
+  backdropFilter: 'blur(10px)',
+  borderBottom: `4px solid ${colors.primary}`,
+  flexWrap: 'wrap', 
+  gap: '20px',
+  minHeight: '120px'
+}}>
+          <img 
+  src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/logo.svg"
+  alt="My Drama Life"
+style={{ height: '80px', width: 'auto', flexShrink: 0 }} />
 
           <nav style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             {menuItems.map((item, index) => {
