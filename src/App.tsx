@@ -417,43 +417,19 @@ if (loading) {
       style={{
         position: 'fixed',
         inset: 0,
-        width: '100vw',          // usa vw invece di % per essere sicuri
-        height: '100vh',         // usa vh non dvh - dvh non è supportato ovunque
-        background: '#000',
-        overflow: 'hidden',
-        padding: 0,
-        margin: 0
+        width: '100vw',
+        height: '100vh',
+        background: 'red',  // ROSSO ACCESO per vedere tutto
+        overflow: 'hidden'
       }}
     >
-      <video
-        ref={preloaderVideoRef}
-        autoPlay
-        muted
-        playsInline
-        preload="auto"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          display: 'block',
-          backgroundColor: '#000'  // aggiungi sfondo nero al video stesso
-        }}
-        onEnded={() => setLoading(false)}
-        onError={() => setLoading(false)}
-        onTimeUpdate={(e) => {
-          const v = e.currentTarget;
-          const tLeft = v.duration - v.currentTime;
-          if (tLeft <= 0.75 && tLeft > 0) v.style.opacity = String(tLeft / 0.75);
-        }}
-      >
-        <source src="/preloader.mp4" type="video/mp4" />
-      </video>
+      <h1 style={{color: 'white', textAlign: 'center', marginTop: '45vh'}}>
+        TEST DIAGNOSTICO
+      </h1>
     </div>
   );
 }
+  
 if (playing) {
 
   if (playing) {
