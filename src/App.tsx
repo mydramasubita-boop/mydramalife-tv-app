@@ -58,9 +58,13 @@ const MyDramaApp = () => {
   const [focusedCardIndex, setFocusedCardIndex] = useState(0);
   const [focusedMenu, setFocusedMenu] = useState(0);
   
+  // NUOVI STATI PER DETTAGLIO
+  const [detailFocusIndex, setDetailFocusIndex] = useState(0);
+  
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const preloaderVideoRef = useRef<HTMLVideoElement | null>(null);
   const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const enterPressStartRef = useRef<number | null>(null);
 
   const colors = {
     primary: '#FF1493',
@@ -90,6 +94,7 @@ const MyDramaApp = () => {
     };
   }, []);
 
+  // NAVIGAZIONE PRINCIPALE
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (loading || playing) return;
@@ -97,13 +102,49 @@ const MyDramaApp = () => {
       const filteredProjects = getFilteredProjects();
       const totalCards = filteredProjects.length;
 
+      // NAVIGAZIONE NEL DETTAGLIO
       if (selectedProject) {
-        if (e.key === 'Escape' || e.key === 'Backspace') {
-          e.preventDefault();
-          setSelectedProject(null);
-          setFocusZone('content');
+        const totalDetailItems = 1 + (selectedProject.video_data.is_serie && selectedProject.video_data.episodi ? selectedProject.video_data.episodi.length : 1);
+        
+        switch(e.key) {
+          case 'ArrowUp':
+            e.preventDefault();
+            setDetailFocusIndex(prev => Math.max(0, prev - 1));
+            break;
+          case 'ArrowDown':
+            e.preventDefault();
+            setDetailFocusIndex(prev => Math.min(totalDetailItems - 1, prev + 1));
+            break;
+          case 'Enter':
+            e.preventDefault();
+            if (detailFocusIndex === 0) {
+              // Bottone Aggiungi o Guarda
+              if (!selectedProject.video_data.is_serie) {
+                playVideo(selectedProject);
+              } else {
+                toggleFavorite(selectedProject.id_progetto);
+              }
+            } else if (selectedProject.video_data.is_serie && selectedProject.video_data.episodi) {
+              // Episodio
+              playVideo(selectedProject, detailFocusIndex - 1);
+            }
+            break;
+          case 'Escape':
+          case 'Backspace':
+            e.preventDefault();
+            setSelectedProject(null);
+            setDetailFocusIndex(0);
+            setFocusZone('content');
+            break;
         }
         return;
+      }
+
+      // LONG PRESS ENTER
+      if (e.key === 'Enter') {
+        if (focusZone === 'content' && !enterPressStartRef.current) {
+          enterPressStartRef.current = Date.now();
+        }
       }
 
       switch(e.key) {
@@ -145,25 +186,6 @@ const MyDramaApp = () => {
             setFocusedCardIndex(prev => Math.min(totalCards - 1, prev + 1));
           }
           break;
-        
-        case 'Enter':
-          e.preventDefault();
-          if (focusZone === 'menu') {
-            const item = menuItems[focusedMenu];
-            if (item) {
-              setCurrentPage(item.id);
-              setSelectedCategory(null);
-              setSearchQuery('');
-              setFocusZone('content');
-              setFocusedCardIndex(0);
-            }
-          } else if (focusZone === 'content') {
-            const project = filteredProjects[focusedCardIndex];
-            if (project) {
-              setSelectedProject(project);
-            }
-          }
-          break;
 
         case 'Escape':
         case 'Backspace':
@@ -175,13 +197,52 @@ const MyDramaApp = () => {
           break;
       }
     };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && enterPressStartRef.current) {
+        const pressDuration = Date.now() - enterPressStartRef.current;
+        enterPressStartRef.current = null;
+
+        if (pressDuration >= 2000) {
+          // LONG PRESS - Toggle preferito
+          const filteredProjects = getFilteredProjects();
+          const project = filteredProjects[focusedCardIndex];
+          if (project && focusZone === 'content' && !selectedProject) {
+            toggleFavorite(project.id_progetto);
+          }
+        } else {
+          // SHORT PRESS - Apri dettaglio
+          if (focusZone === 'menu') {
+            const item = menuItems[focusedMenu];
+            if (item) {
+              setCurrentPage(item.id);
+              setSelectedCategory(null);
+              setSearchQuery('');
+              setFocusZone('content');
+              setFocusedCardIndex(0);
+            }
+          } else if (focusZone === 'content' && !selectedProject) {
+            const filteredProjects = getFilteredProjects();
+            const project = filteredProjects[focusedCardIndex];
+            if (project) {
+              setSelectedProject(project);
+              setDetailFocusIndex(0);
+            }
+          }
+        }
+      }
+    };
     
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [loading, playing, selectedProject, focusedMenu, focusedCardIndex, currentPage, focusZone]);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [loading, playing, selectedProject, focusedMenu, focusedCardIndex, currentPage, focusZone, detailFocusIndex]);
 
   useEffect(() => {
-    if (focusZone === 'content') {
+    if (focusZone === 'content' && !selectedProject) {
       setTimeout(() => {
         const focusedElement = document.querySelector(`[data-card-index="${focusedCardIndex}"]`);
         if (focusedElement) {
@@ -193,7 +254,21 @@ const MyDramaApp = () => {
         }
       }, 50);
     }
-  }, [focusedCardIndex, focusZone]);
+  }, [focusedCardIndex, focusZone, selectedProject]);
+
+  useEffect(() => {
+    if (selectedProject && detailFocusIndex > 0) {
+      setTimeout(() => {
+        const focusedElement = document.querySelector(`[data-detail-index="${detailFocusIndex}"]`);
+        if (focusedElement) {
+          focusedElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
+      }, 50);
+    }
+  }, [detailFocusIndex, selectedProject]);
 
   useEffect(() => {
     loadProjects();
@@ -540,10 +615,10 @@ const MyDramaApp = () => {
               </div>
 
               <div style={{ display:'flex', gap: '25px', marginTop: '40px', flexWrap: 'wrap' }}>
-                <button onClick={() => toggleFavorite(selectedProject.id_progetto)} style={{ padding: '22px 45px', background: favorites.includes(selectedProject.id_progetto) ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})` : 'rgba(255,255,255,0.15)', border: `3px solid ${colors.primary}`, borderRadius: '15px', color: 'white', display: 'flex', alignItems: 'center', gap: '15px', fontSize: '22px', cursor: 'pointer', fontWeight: 'bold' }}><Heart size={28} fill={favorites.includes(selectedProject.id_progetto) ? 'white' : 'none'} />{favorites.includes(selectedProject.id_progetto) ? 'Rimuovi' : 'Aggiungi'}</button>
+                <button data-detail-index={0} onClick={() => toggleFavorite(selectedProject.id_progetto)} style={{ padding: '22px 45px', background: detailFocusIndex === 0 ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})` : favorites.includes(selectedProject.id_progetto) ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})` : 'rgba(255,255,255,0.15)', border: `3px solid ${detailFocusIndex === 0 ? '#fff' : colors.primary}`, borderRadius: '15px', color: 'white', display: 'flex', alignItems: 'center', gap: '15px', fontSize: '22px', cursor: 'pointer', fontWeight: 'bold', boxShadow: detailFocusIndex === 0 ? `0 0 30px ${colors.primary}` : 'none', transform: detailFocusIndex === 0 ? 'scale(1.05)' : 'scale(1)', transition: 'all 0.3s' }}><Heart size={28} fill={favorites.includes(selectedProject.id_progetto) ? 'white' : 'none'} />{favorites.includes(selectedProject.id_progetto) ? 'Rimuovi' : 'Aggiungi'}</button>
 
                 {!selectedProject.video_data.is_serie && (
-                  <button onClick={() => playVideo(selectedProject)} style={{ padding: '28px 65px', background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`, border: 'none', borderRadius: '15px', color: 'white', display: 'flex', alignItems: 'center', gap: '20px', fontSize: '30px', cursor: 'pointer', fontWeight: 'bold', boxShadow: `0 15px 50px rgba(255,20,147,0.6)` }}><Play size={36} fill="white" /> GUARDA</button>
+                  <button data-detail-index={0} onClick={() => playVideo(selectedProject)} style={{ padding: '28px 65px', background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`, border: detailFocusIndex === 0 ? '3px solid #fff' : 'none', borderRadius: '15px', color: 'white', display: 'flex', alignItems: 'center', gap: '20px', fontSize: '30px', cursor: 'pointer', fontWeight: 'bold', boxShadow: detailFocusIndex === 0 ? `0 0 30px ${colors.primary}` : `0 15px 50px rgba(255,20,147,0.6)`, transform: detailFocusIndex === 0 ? 'scale(1.05)' : 'scale(1)', transition: 'all 0.3s' }}><Play size={36} fill="white" /> GUARDA</button>
                 )}
               </div>
             </div>
@@ -554,7 +629,7 @@ const MyDramaApp = () => {
               <h2 style={{ fontSize: '44px', marginBottom: '35px', textShadow: '0 4px 20px rgba(0,0,0,0.9)' }}>Episodi</h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '30px' }}>
                 {selectedProject.video_data.episodi.map((ep: Episodio, i: number) => (
-                  <button key={i} onClick={() => playVideo(selectedProject, i)} style={{ padding: '30px', background: 'rgba(26,26,26,0.95)', border: `3px solid ${colors.primary}`, borderRadius: '15px', color: 'white', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '25px', fontSize: '24px', fontWeight: 'bold', transition: 'all 0.3s' }}>
+                  <button key={i} data-detail-index={i + 1} onClick={() => playVideo(selectedProject, i)} style={{ padding: '30px', background: 'rgba(26,26,26,0.95)', border: `3px solid ${detailFocusIndex === i + 1 ? '#fff' : colors.primary}`, borderRadius: '15px', color: 'white', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '25px', fontSize: '24px', fontWeight: 'bold', transition: 'all 0.3s', boxShadow: detailFocusIndex === i + 1 ? `0 0 30px ${colors.primary}` : 'none', transform: detailFocusIndex === i + 1 ? 'scale(1.05)' : 'scale(1)' }}>
                     <div style={{ width: '60px', height: '60px', background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Play size={32} fill="white" /></div>
                     <span>{ep.titolo_episodio}</span>
                   </button>
@@ -570,22 +645,8 @@ const MyDramaApp = () => {
   return (
     <div style={{ width: '100%', minHeight: '100vh', background: `url(https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/background.png)`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', color: 'white', opacity: showApp ? 1 : 0, transition: 'opacity 0.5s ease-in' }}>
       <div style={{ position: 'relative', zIndex: 1 }}>
-       <header style={{
-  padding: '20px 60px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  background: 'rgba(0,0,0,0.95)',
-  backdropFilter: 'blur(10px)',
-  borderBottom: `4px solid ${colors.primary}`,
-  flexWrap: 'wrap', 
-  gap: '20px',
-  minHeight: '120px'
-}}>
-          <img 
-  src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/logo.svg"
-  alt="My Drama Life"
-style={{ height: '80px', width: 'auto', flexShrink: 0 }} />
+        <header style={{ padding: '20px 60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(10px)', borderBottom: `4px solid ${colors.primary}`, flexWrap: 'wrap', gap: '20px', minHeight: '120px' }}>
+          <img src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/logo.svg" alt="My Drama Life" style={{ height: '80px', width: 'auto', flexShrink: 0 }} />
 
           <nav style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             {menuItems.map((item, index) => {
@@ -602,7 +663,7 @@ style={{ height: '80px', width: 'auto', flexShrink: 0 }} />
           </nav>
         </header>
 
-        <main style={{ padding: '40px 60px' }}>
+        <main style={{ padding: '40px 60px', paddingTop: currentPage === 'search' ? '160px' : '40px' }}>
           {currentPage === 'home' && (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80px', marginBottom: '20px' }}><h1 style={{ fontSize: '38px', textShadow: '0 4px 20px rgba(0,0,0,0.9)', margin: 0 }}>Ultime uscite</h1></div>)}
 
           {(currentPage === 'favorites' || (currentPage === 'history' && history.length === 0)) && (<div style={{ minHeight: '80px', marginBottom: '20px' }} />)}
