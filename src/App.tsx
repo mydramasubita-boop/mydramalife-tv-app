@@ -419,13 +419,36 @@ if (loading) {
         inset: 0,
         width: '100vw',
         height: '100vh',
-        background: 'red',  // ROSSO ACCESO per vedere tutto
+        background: '#000',
         overflow: 'hidden'
       }}
     >
-      <h1 style={{color: 'white', textAlign: 'center', marginTop: '45vh'}}>
-        TEST DIAGNOSTICO
-      </h1>
+      <video
+        ref={preloaderVideoRef}
+        autoPlay
+        muted
+        playsInline
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          display: 'block'
+        }}
+        onTimeUpdate={(e: React.SyntheticEvent<HTMLVideoElement>) => {
+          const video = e.target as HTMLVideoElement;
+          const timeLeft = video.duration - video.currentTime;
+          if (timeLeft <= 0.75 && timeLeft > 0) {
+            video.style.opacity = (timeLeft / 0.75).toString();
+          }
+        }}
+        onEnded={() => setLoading(false)}
+        onError={() => setLoading(false)}
+      >
+        <source src="/preloader.mp4" type="video/mp4" />
+      </video>
     </div>
   );
 }
