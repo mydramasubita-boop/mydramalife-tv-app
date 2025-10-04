@@ -57,7 +57,7 @@ const MyDramaApp = () => {
   const [focusZone, setFocusZone] = useState<'menu' | 'content'>('menu');
   const [focusedCardIndex, setFocusedCardIndex] = useState(0);
   const [focusedMenu, setFocusedMenu] = useState(0);
-  const [detailFocusZone, setDetailFocusZone] = useState<'back' | 'genres' | 'actors' | 'buttons' | 'episodes'>('buttons');
+  const [detailFocusZone, setDetailFocusZone] = useState<'back' | 'genres' | 'actors' | 'buttons' | 'episodes'>('back');
   const [detailSubIndex, setDetailSubIndex] = useState(0);
   
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -179,7 +179,7 @@ const MyDramaApp = () => {
             e.preventDefault();
             if (detailFocusZone === 'back') {
               setSelectedProject(null);
-              setDetailFocusZone('buttons');
+              setDetailFocusZone('back');
               setDetailSubIndex(0);
               setFocusZone('content');
             } else if (detailFocusZone === 'genres') {
@@ -187,15 +187,17 @@ const MyDramaApp = () => {
               setSearchQuery(genre);
               setCurrentPage('search');
               setSelectedProject(null);
-              setDetailFocusZone('buttons');
+              setDetailFocusZone('back');
               setDetailSubIndex(0);
+              setFocusZone('content');
             } else if (detailFocusZone === 'actors') {
               const actor = selectedProject.attori[detailSubIndex];
               setSearchQuery(actor);
               setCurrentPage('search');
               setSelectedProject(null);
-              setDetailFocusZone('buttons');
+              setDetailFocusZone('back');
               setDetailSubIndex(0);
+              setFocusZone('content');
             } else if (detailFocusZone === 'buttons') {
               if (detailSubIndex === 0) {
                 toggleFavorite(selectedProject.id_progetto);
@@ -211,7 +213,7 @@ const MyDramaApp = () => {
           case 'Backspace':
             e.preventDefault();
             setSelectedProject(null);
-            setDetailFocusZone('buttons');
+            setDetailFocusZone('back');
             setDetailSubIndex(0);
             setFocusZone('content');
             break;
@@ -296,7 +298,6 @@ const MyDramaApp = () => {
               setCurrentPage(item.id);
               setSelectedCategory(null);
               setSearchQuery('');
-              setFocusZone('content');
               setFocusedCardIndex(0);
             }
           } else if (focusZone === 'content' && !selectedProject) {
@@ -304,7 +305,7 @@ const MyDramaApp = () => {
             const project = filteredProjects[focusedCardIndex];
             if (project) {
               setSelectedProject(project);
-              setDetailFocusZone('buttons');
+              setDetailFocusZone('back');
               setDetailSubIndex(0);
             }
           }
@@ -657,7 +658,7 @@ const MyDramaApp = () => {
               </div>
             </div>
 
-            {playing.video_data.is_serie && playing.video_data.episodi && (
+            {{playing.video_data.is_serie && playing.video_data.episodi && (
               <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
                 {currentEpisode > 0 && (<button onClick={prevEpisode} style={{ padding: '18px 35px', background: 'rgba(0,0,0,0.8)', border: `2px solid ${colors.primary}`, borderRadius: '12px', color: 'white', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', cursor: 'pointer', fontWeight: 'bold' }}><SkipBack size={20} /> Precedente</button>)}
                 {currentEpisode < playing.video_data.episodi.length - 1 && (<button onClick={nextEpisode} style={{ padding: '18px 35px', background: 'rgba(0,0,0,0.8)', border: `2px solid ${colors.primary}`, borderRadius: '12px', color: 'white', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', cursor: 'pointer', fontWeight: 'bold' }}>Successivo <SkipForward size={20} /></button>)}
@@ -680,12 +681,12 @@ const MyDramaApp = () => {
   if (selectedProject) {
     return (
       <div style={{ width: '100%', minHeight: '100vh', background: `url(https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/background.png)`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', color: 'white', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 200, overflowY: 'auto' }}>
-        <div style={{ position: 'relative', zIndex: 2, padding: '60px', paddingTop: '200px' }}>
+        <div style={{ position: 'relative', zIndex: 2, padding: '60px', paddingTop: '160px' }}>
           <button 
             data-detail-back="true"
             onClick={() => {
               setSelectedProject(null);
-              setDetailFocusZone('buttons');
+              setDetailFocusZone('back');
               setDetailSubIndex(0);
               setFocusZone('content');
             }} 
@@ -724,8 +725,9 @@ const MyDramaApp = () => {
                       setSearchQuery(genere); 
                       setCurrentPage('search'); 
                       setSelectedProject(null); 
-                      setDetailFocusZone('buttons');
+                      setDetailFocusZone('back');
                       setDetailSubIndex(0);
+                      setFocusZone('content');
                     }} 
                     style={{ 
                       padding: '15px 30px', 
@@ -757,8 +759,9 @@ const MyDramaApp = () => {
                         setSearchQuery(attore); 
                         setCurrentPage('search'); 
                         setSelectedProject(null);
-                        setDetailFocusZone('buttons');
+                        setDetailFocusZone('back');
                         setDetailSubIndex(0);
+                        setFocusZone('content');
                       }} 
                       style={{ 
                         padding: '12px 25px', 
@@ -893,26 +896,26 @@ const MyDramaApp = () => {
           left: 0, 
           right: 0, 
           zIndex: 100, 
-          padding: '20px 40px',
+          padding: '18px 40px',
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'space-between', 
           background: 'rgba(0,0,0,0.95)', 
           backdropFilter: 'blur(10px)', 
           borderBottom: `4px solid ${colors.primary}`,
-          height: '100px'
+          height: '95px'
         }}>
-          <img src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/logo.svg" alt="My Drama Life" style={{ height: '60px', width: 'auto', flexShrink: 0 }} />
+          <img src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/logo.svg" alt="My Drama Life" style={{ height: '55px', width: 'auto', flexShrink: 0 }} />
 
-          <nav style={{ display: 'flex', gap: '10px', alignItems: 'center', flex: 1, justifyContent: 'flex-end', overflowX: 'hidden' }}>
+          <nav style={{ display: 'flex', gap: '9px', alignItems: 'center', flex: 1, justifyContent: 'flex-end', overflowX: 'hidden' }}>
             {menuItems.map((item, index) => {
               const Icon = item.icon;
               const isFocused = focusZone === 'menu' && focusedMenu === index;
               const isActive = currentPage === item.id;
               return (
-                <button key={item.id} onClick={() => { setCurrentPage(item.id); setSelectedCategory(null); setSearchQuery(''); setFocusedCardIndex(0); setFocusZone('content'); }} style={{ padding: '10px 14px', background: isActive ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})` : 'transparent', border: isFocused ? `3px solid ${colors.primary}` : '3px solid transparent', outline: 'none', borderRadius: '10px', color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px', cursor: 'pointer', fontWeight: 'bold', transform: isFocused ? 'scale(1.05)' : 'scale(1)', transition: 'all 0.2s', minWidth: '70px', boxShadow: isFocused ? `0 0 20px ${colors.primary}` : 'none', flexShrink: 0 }}>
-                  <Icon size={24} />
-                  <span style={{ fontSize: '12px', textAlign: 'center', whiteSpace: 'nowrap' }}>{item.label}</span>
+                <button key={item.id} onClick={() => { setCurrentPage(item.id); setSelectedCategory(null); setSearchQuery(''); setFocusedCardIndex(0); }} style={{ padding: '9px 13px', background: isActive ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})` : 'transparent', border: isFocused ? `3px solid ${colors.primary}` : '3px solid transparent', outline: 'none', borderRadius: '10px', color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', cursor: 'pointer', fontWeight: 'bold', transform: isFocused ? 'scale(1.05)' : 'scale(1)', transition: 'all 0.2s', minWidth: '68px', boxShadow: isFocused ? `0 0 20px ${colors.primary}` : 'none', flexShrink: 0 }}>
+                  <Icon size={22} />
+                  <span style={{ fontSize: '11px', textAlign: 'center', whiteSpace: 'nowrap' }}>{item.label}</span>
                 </button>
               );
             })}
@@ -921,7 +924,7 @@ const MyDramaApp = () => {
 
         <main style={{ 
           padding: '40px 60px', 
-          paddingTop: currentPage === 'search' ? '220px' : '140px',
+          paddingTop: currentPage === 'search' ? '210px' : '135px',
           minHeight: '100vh' 
         }}>
           {currentPage === 'home' && (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80px', marginBottom: '20px' }}><h1 style={{ fontSize: '38px', textShadow: '0 4px 20px rgba(0,0,0,0.9)', margin: 0 }}>Ultime uscite</h1></div>)}
