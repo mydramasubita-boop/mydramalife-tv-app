@@ -897,14 +897,14 @@ const MyDramaApp = () => {
         }
       `}</style>
       
-      <div style={{ position: 'relative', zIndex: 1, paddingTop: '135px' }}>
+      <div style={{ position: 'relative', zIndex: 1;}}>
   <header style={{ 
     position: 'fixed', 
     top: 0, 
     left: 0, 
     right: 0, 
     zIndex: 100, 
-    padding: '18px 40px',
+    padding: '80px 60px 45px 60px',
     display: 'flex', 
     alignItems: 'center', 
     justifyContent: 'space-between', 
@@ -931,11 +931,11 @@ const MyDramaApp = () => {
   </header>
 
   <main style={{ 
-    padding: '80px 60px', 
+    padding: '45px 60px', 
     paddingTop: '40px',
     minHeight: '100vh' 
   }}>
-    {currentPage === 'home' && (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80px', marginBottom: '45px' }}><h1 style={{ fontSize: '38px', textShadow: '0 4px 20px rgba(0,0,0,0.9)', margin: 0 }}>Ultime uscite</h1></div>)}
+    {currentPage === 'home' && (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80px', marginBottom: '20px' }}><h1 style={{ fontSize: '38px', textShadow: '0 4px 20px rgba(0,0,0,0.9)', margin: 0 }}>Ultime uscite</h1></div>)}
 
           {(currentPage === 'favorites' || (currentPage === 'history' && history.length === 0)) && (<div style={{ minHeight: '80px', marginBottom: '20px' }} />)}
 
