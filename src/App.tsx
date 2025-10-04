@@ -871,44 +871,42 @@ const MyDramaApp = () => {
     <div style={{ width: '100%', minHeight: '100vh', background: `url(https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/background.png)`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', color: 'white', opacity: showApp ? 1 : 0, transition: 'opacity 0.5s ease-in' }}>
       <div style={{ position: 'relative', zIndex: 1 }}>
         <header style={{ 
-          position: 'fixed', 
-          top: 0, 
-          left: 0, 
-          right: 0, 
-          zIndex: 100, 
-          padding: '20px 60px', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between', 
-          background: 'rgba(0,0,0,0.95)', 
-          backdropFilter: 'blur(10px)', 
-          borderBottom: `4px solid ${colors.primary}`, 
-          flexWrap: 'wrap', 
-          gap: '20px', 
-          minHeight: '120px' 
-        }}>
-          <img src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/logo.svg" alt="My Drama Life" style={{ height: '80px', width: 'auto', flexShrink: 0 }} />
+  position: 'fixed', 
+  top: 0, 
+  left: 0, 
+  right: 0, 
+  zIndex: 100, 
+  padding: '15px 40px',
+  display: 'flex', 
+  alignItems: 'center', 
+  justifyContent: 'space-between', 
+  background: 'rgba(0,0,0,0.95)', 
+  backdropFilter: 'blur(10px)', 
+  borderBottom: `4px solid ${colors.primary}`,
+  height: '80px'
+}}>
+  <img src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/logo.svg" alt="My Drama Life" style={{ height: '50px', width: 'auto', flexShrink: 0 }} />
 
-          <nav style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            {menuItems.map((item, index) => {
-              const Icon = item.icon;
-              const isFocused = focusZone === 'menu' && focusedMenu === index;
-              const isActive = currentPage === item.id;
-              return (
-                <button key={item.id} onClick={() => { setCurrentPage(item.id); setSelectedCategory(null); setSearchQuery(''); setFocusedCardIndex(0); setFocusZone('content'); }} style={{ padding: '12px 16px', background: isActive ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})` : 'transparent', border: isFocused ? `3px solid ${colors.primary}` : '3px solid transparent', outline: 'none', borderRadius: '10px', color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', cursor: 'pointer', fontWeight: 'bold', transform: isFocused ? 'scale(1.1)' : 'scale(1)', transition: 'all 0.2s', minWidth: '80px', boxShadow: isFocused ? `0 0 20px ${colors.primary}` : 'none' }}>
-                  <Icon size={28} />
-                  <span style={{ fontSize: '13px', textAlign: 'center' }}>{item.label}</span>
-                </button>
-              );
-            })}
-          </nav>
-        </header>
+  <nav style={{ display: 'flex', gap: '8px', alignItems: 'center', flex: 1, justifyContent: 'flex-end', overflowX: 'hidden' }}>
+    {menuItems.map((item, index) => {
+      const Icon = item.icon;
+      const isFocused = focusZone === 'menu' && focusedMenu === index;
+      const isActive = currentPage === item.id;
+      return (
+        <button key={item.id} onClick={() => { setCurrentPage(item.id); setSelectedCategory(null); setSearchQuery(''); setFocusedCardIndex(0); setFocusZone('content'); }} style={{ padding: '8px 12px', background: isActive ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})` : 'transparent', border: isFocused ? `3px solid ${colors.primary}` : '3px solid transparent', outline: 'none', borderRadius: '8px', color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', cursor: 'pointer', fontWeight: 'bold', transform: isFocused ? 'scale(1.05)' : 'scale(1)', transition: 'all 0.2s', minWidth: '65px', boxShadow: isFocused ? `0 0 20px ${colors.primary}` : 'none', flexShrink: 0 }}>
+          <Icon size={20} />
+          <span style={{ fontSize: '11px', textAlign: 'center', whiteSpace: 'nowrap' }}>{item.label}</span>
+        </button>
+      );
+    })}
+  </nav>
+</header>
 
         <main style={{ 
-          padding: '40px 60px', 
-          paddingTop: currentPage === 'search' ? '280px' : '180px', 
-          minHeight: '100vh' 
-        }}>
+  padding: '40px 60px', 
+  paddingTop: currentPage === 'search' ? '200px' : '120px',
+  minHeight: '100vh' 
+}}>
           {currentPage === 'home' && (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80px', marginBottom: '20px' }}><h1 style={{ fontSize: '38px', textShadow: '0 4px 20px rgba(0,0,0,0.9)', margin: 0 }}>Ultime uscite</h1></div>)}
 
           {(currentPage === 'favorites' || (currentPage === 'history' && history.length === 0)) && (<div style={{ minHeight: '80px', marginBottom: '20px' }} />)}
