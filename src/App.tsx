@@ -735,7 +735,7 @@ const MyDramaApp = () => {
                       setSelectedProject(null); 
                       setDetailFocusZone('back');
                       setDetailSubIndex(0);
-                      setFocusZone('content');
+                      setFocusZone('menu');
                     }} 
                     style={{ 
                       padding: '15px 30px', 
