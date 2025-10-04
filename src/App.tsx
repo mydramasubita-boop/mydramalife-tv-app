@@ -59,6 +59,7 @@ const MyDramaApp = () => {
   const [focusedMenu, setFocusedMenu] = useState(0);
   const [detailFocusZone, setDetailFocusZone] = useState<'back' | 'genres' | 'actors' | 'buttons' | 'episodes'>('buttons');
   const [detailSubIndex, setDetailSubIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const preloaderVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -88,6 +89,15 @@ const MyDramaApp = () => {
     const cardWidth = 250 + 35;
     return Math.floor(containerWidth / cardWidth) || 1;
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     lockOrientation();
@@ -605,7 +615,7 @@ const MyDramaApp = () => {
               video.style.opacity = (timeLeft / 0.75).toString();
             }
           }}
-          onEnded={() => setLoading(false)}
+          onEnded(() => setLoading(false)}
           onError={() => setLoading(false)}
         >
           <source src="/preloader.mp4" type="video/mp4" />
@@ -680,7 +690,7 @@ const MyDramaApp = () => {
   if (selectedProject) {
     return (
       <div style={{ width: '100%', minHeight: '100vh', background: `url(https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/background.png)`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', color: 'white', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 200, overflowY: 'auto' }}>
-        <div style={{ position: 'relative', zIndex: 2, padding: '60px', paddingTop: '200px' }}>
+        <div style={{ position: 'relative', zIndex: 2, padding: isMobile ? '30px 20px' : '60px', paddingTop: isMobile ? '100px' : '200px' }}>
           <button 
             data-detail-back="true"
             onClick={() => {
@@ -690,7 +700,7 @@ const MyDramaApp = () => {
               setFocusZone('content');
             }} 
             style={{ 
-              padding: '25px 45px', 
+              padding: isMobile ? '15px 25px' : '25px 45px', 
               background: 'rgba(0,0,0,0.95)', 
               border: `3px solid ${detailFocusZone === 'back' ? '#fff' : colors.primary}`, 
               borderRadius: '15px', 
@@ -698,24 +708,24 @@ const MyDramaApp = () => {
               display: 'flex', 
               alignItems: 'center', 
               gap: '15px', 
-              fontSize: '26px', 
+              fontSize: isMobile ? '18px' : '26px', 
               cursor: 'pointer', 
-              marginBottom: '50px', 
+              marginBottom: isMobile ? '30px' : '50px', 
               fontWeight: 'bold',
               boxShadow: detailFocusZone === 'back' ? `0 0 30px ${colors.primary}` : 'none',
               transform: detailFocusZone === 'back' ? 'scale(1.05)' : 'scale(1)',
               transition: 'all 0.3s'
             }}>
-            <ChevronLeft size={32} /> Indietro
+            <ChevronLeft size={isMobile ? 24 : 32} /> Indietro
           </button>
 
-          <div style={{ display: 'flex', gap: '60px', marginBottom: '60px', flexWrap: 'wrap' }}>
-            <img src={selectedProject.url_poster_verticale} alt={selectedProject.titolo} style={{ width: '400px', height: '600px', objectFit: 'cover', borderRadius: '20px', boxShadow: `0 30px 80px rgba(255,20,147,0.5)` }} />
+          <div style={{ display: 'flex', gap: isMobile ? '30px' : '60px', marginBottom: isMobile ? '30px' : '60px', flexWrap: 'wrap' }}>
+            <img src={selectedProject.url_poster_verticale} alt={selectedProject.titolo} style={{ width: isMobile ? '100%' : '400px', maxWidth: '400px', height: 'auto', objectFit: 'cover', borderRadius: '20px', boxShadow: `0 30px 80px rgba(255,20,147,0.5)` }} />
 
-            <div style={{ flex: 1, minWidth: '400px' }}>
-              <h1 style={{ fontSize: '64px', marginBottom: '30px', lineHeight: '1.2', textShadow: '0 4px 20px rgba(0,0,0,0.9)' }}>{selectedProject.titolo}</h1>
+            <div style={{ flex: 1, minWidth: isMobile ? '100%' : '400px' }}>
+              <h1 style={{ fontSize: isMobile ? '32px' : '64px', marginBottom: isMobile ? '20px' : '30px', lineHeight: '1.2', textShadow: '0 4px 20px rgba(0,0,0,0.9)' }}>{selectedProject.titolo}</h1>
               
-              <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: isMobile ? '10px' : '20px', marginBottom: isMobile ? '20px' : '30px', flexWrap: 'wrap' }}>
                 {selectedProject.generi.map((genere: string, i: number) => (
                   <span 
                     key={i} 
@@ -728,10 +738,10 @@ const MyDramaApp = () => {
                       setDetailSubIndex(0);
                     }} 
                     style={{ 
-                      padding: '15px 30px', 
+                      padding: isMobile ? '10px 20px' : '15px 30px', 
                       background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`, 
                       borderRadius: '30px', 
-                      fontSize: '20px', 
+                      fontSize: isMobile ? '14px' : '20px', 
                       cursor: 'pointer', 
                       fontWeight: 'bold', 
                       boxShadow: detailFocusZone === 'genres' && detailSubIndex === i ? `0 0 30px ${colors.primary}` : '0 4px 15px rgba(0,0,0,0.3)',
@@ -744,11 +754,11 @@ const MyDramaApp = () => {
                 ))}
               </div>
 
-              <p style={{ fontSize: '24px', lineHeight: '1.8', marginBottom: '40px', textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}>{selectedProject.descrizione}</p>
+              <p style={{ fontSize: isMobile ? '16px' : '24px', lineHeight: '1.8', marginBottom: isMobile ? '30px' : '40px', textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}>{selectedProject.descrizione}</p>
 
-              <div style={{ marginBottom: '30px' }}>
-                <h3 style={{ fontSize: '28px', marginBottom: '20px', opacity: 0.9 }}>Cast:</h3>
-                <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+              <div style={{ marginBottom: isMobile ? '20px' : '30px' }}>
+                <h3 style={{ fontSize: isMobile ? '20px' : '28px', marginBottom: isMobile ? '10px' : '20px', opacity: 0.9 }}>Cast:</h3>
+                <div style={{ display: 'flex', gap: isMobile ? '10px' : '15px', flexWrap: 'wrap' }}>
                   {selectedProject.attori.map((attore: string, i: number) => (
                     <span 
                       key={i} 
@@ -761,10 +771,10 @@ const MyDramaApp = () => {
                         setDetailSubIndex(0);
                       }} 
                       style={{ 
-                        padding: '12px 25px', 
+                        padding: isMobile ? '8px 15px' : '12px 25px', 
                         background: 'rgba(255,20,147,0.9)', 
                         borderRadius: '10px', 
-                        fontSize: '18px', 
+                        fontSize: isMobile ? '14px' : '18px', 
                         cursor: 'pointer', 
                         fontWeight: 'bold', 
                         boxShadow: detailFocusZone === 'actors' && detailSubIndex === i ? `0 0 30px ${colors.primary}` : '0 4px 15px rgba(0,0,0,0.3)',
@@ -778,12 +788,12 @@ const MyDramaApp = () => {
                 </div>
               </div>
 
-              <div style={{ display:'flex', gap: '25px', marginTop: '40px', flexWrap: 'wrap' }}>
+              <div style={{ display:'flex', gap: isMobile ? '15px' : '25px', marginTop: isMobile ? '20px' : '40px', flexWrap: 'wrap' }}>
                 <button 
                   data-detail-button={0}
                   onClick={() => toggleFavorite(selectedProject.id_progetto)} 
                   style={{ 
-                    padding: '22px 45px', 
+                    padding: isMobile ? '15px 30px' : '22px 45px', 
                     background: detailFocusZone === 'buttons' && detailSubIndex === 0 ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})` : favorites.includes(selectedProject.id_progetto) ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})` : 'rgba(255,255,255,0.15)', 
                     border: `3px solid ${detailFocusZone === 'buttons' && detailSubIndex === 0 ? '#fff' : colors.primary}`, 
                     borderRadius: '15px', 
@@ -791,14 +801,14 @@ const MyDramaApp = () => {
                     display: 'flex', 
                     alignItems: 'center', 
                     gap: '15px', 
-                    fontSize: '22px', 
+                    fontSize: isMobile ? '16px' : '22px', 
                     cursor: 'pointer', 
                     fontWeight: 'bold', 
                     boxShadow: detailFocusZone === 'buttons' && detailSubIndex === 0 ? `0 0 30px ${colors.primary}` : 'none', 
                     transform: detailFocusZone === 'buttons' && detailSubIndex === 0 ? 'scale(1.05)' : 'scale(1)', 
                     transition: 'all 0.3s' 
                   }}>
-                  <Heart size={28} fill={favorites.includes(selectedProject.id_progetto) ? 'white' : 'none'} />
+                  <Heart size={isMobile ? 20 : 28} fill={favorites.includes(selectedProject.id_progetto) ? 'white' : 'none'} />
                   {favorites.includes(selectedProject.id_progetto) ? 'Rimuovi' : 'Aggiungi'}
                 </button>
 
@@ -807,7 +817,7 @@ const MyDramaApp = () => {
                     data-detail-button={1}
                     onClick={() => playVideo(selectedProject)} 
                     style={{ 
-                      padding: '28px 65px', 
+                      padding: isMobile ? '18px 40px' : '28px 65px', 
                       background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`, 
                       border: detailFocusZone === 'buttons' && detailSubIndex === 1 ? '3px solid #fff' : 'none', 
                       borderRadius: '15px', 
@@ -815,14 +825,14 @@ const MyDramaApp = () => {
                       display: 'flex', 
                       alignItems: 'center', 
                       gap: '20px', 
-                      fontSize: '30px', 
+                      fontSize: isMobile ? '20px' : '30px', 
                       cursor: 'pointer', 
                       fontWeight: 'bold', 
                       boxShadow: detailFocusZone === 'buttons' && detailSubIndex === 1 ? `0 0 30px ${colors.primary}` : `0 15px 50px rgba(255,20,147,0.6)`, 
                       transform: detailFocusZone === 'buttons' && detailSubIndex === 1 ? 'scale(1.05)' : 'scale(1)', 
                       transition: 'all 0.3s' 
                     }}>
-                    <Play size={36} fill="white" /> GUARDA
+                    <Play size={isMobile ? 24 : 36} fill="white" /> GUARDA
                   </button>
                 )}
               </div>
@@ -831,15 +841,15 @@ const MyDramaApp = () => {
 
           {selectedProject.video_data.is_serie && selectedProject.video_data.episodi && (
             <div>
-              <h2 style={{ fontSize: '44px', marginBottom: '35px', textShadow: '0 4px 20px rgba(0,0,0,0.9)' }}>Episodi</h2>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '30px' }}>
+              <h2 style={{ fontSize: isMobile ? '28px' : '44px', marginBottom: isMobile ? '20px' : '35px', textShadow: '0 4px 20px rgba(0,0,0,0.9)' }}>Episodi</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(400px, 1fr))', gap: isMobile ? '15px' : '30px' }}>
                 {selectedProject.video_data.episodi.map((ep: Episodio, i: number) => (
                   <button 
                     key={i} 
                     data-detail-episode={i}
                     onClick={() => playVideo(selectedProject, i)} 
                     style={{ 
-                      padding: '30px', 
+                      padding: isMobile ? '20px' : '30px', 
                       background: 'rgba(26,26,26,0.95)', 
                       border: `3px solid ${detailFocusZone === 'episodes' && detailSubIndex === i ? '#fff' : colors.primary}`, 
                       borderRadius: '15px', 
@@ -848,14 +858,14 @@ const MyDramaApp = () => {
                       cursor: 'pointer', 
                       display: 'flex', 
                       alignItems: 'center', 
-                      gap: '25px', 
-                      fontSize: '24px', 
+                      gap: isMobile ? '15px' : '25px', 
+                      fontSize: isMobile ? '16px' : '24px', 
                       fontWeight: 'bold', 
                       transition: 'all 0.3s', 
                       boxShadow: detailFocusZone === 'episodes' && detailSubIndex === i ? `0 0 30px ${colors.primary}` : 'none', 
                       transform: detailFocusZone === 'episodes' && detailSubIndex === i ? 'scale(1.05)' : 'scale(1)' 
                     }}>
-                    <div style={{ width: '60px', height: '60px', background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Play size={32} fill="white" /></div>
+                    <div style={{ width: isMobile ? '40px' : '60px', height: isMobile ? '40px' : '60px', background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Play size={isMobile ? 20 : 32} fill="white" /></div>
                     <span>{ep.titolo_episodio}</span>
                   </button>
                 ))}
@@ -876,7 +886,7 @@ const MyDramaApp = () => {
           left: 0, 
           right: 0, 
           zIndex: 100, 
-          padding: '20px 60px', 
+          padding: isMobile ? '10px 20px' : '20px 60px', 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'space-between', 
@@ -884,20 +894,20 @@ const MyDramaApp = () => {
           backdropFilter: 'blur(10px)', 
           borderBottom: `4px solid ${colors.primary}`, 
           flexWrap: 'wrap', 
-          gap: '20px', 
-          minHeight: '120px' 
+          gap: isMobile ? '10px' : '20px', 
+          minHeight: isMobile ? '70px' : '120px' 
         }}>
-          <img src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/logo.svg" alt="My Drama Life" style={{ height: '80px', width: 'auto', flexShrink: 0 }} />
+          <img src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/logo.svg" alt="My Drama Life" style={{ height: isMobile ? '40px' : '80px', width: 'auto', flexShrink: 0 }} />
 
-          <nav style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <nav style={{ display: 'flex', gap: isMobile ? '5px' : '10px', alignItems: 'center', overflowX: 'auto', maxWidth: isMobile ? 'calc(100vw - 80px)' : 'auto' }}>
             {menuItems.map((item, index) => {
               const Icon = item.icon;
               const isFocused = focusZone === 'menu' && focusedMenu === index;
               const isActive = currentPage === item.id;
               return (
-                <button key={item.id} onClick={() => { setCurrentPage(item.id); setSelectedCategory(null); setSearchQuery(''); setFocusedCardIndex(0); setFocusZone('content'); }} style={{ padding: '12px 16px', background: isActive ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})` : 'transparent', border: isFocused ? `3px solid ${colors.primary}` : '3px solid transparent', outline: 'none', borderRadius: '10px', color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', cursor: 'pointer', fontWeight: 'bold', transform: isFocused ? 'scale(1.1)' : 'scale(1)', transition: 'all 0.2s', minWidth: '80px', boxShadow: isFocused ? `0 0 20px ${colors.primary}` : 'none' }}>
-                  <Icon size={28} />
-                  <span style={{ fontSize: '13px', textAlign: 'center' }}>{item.label}</span>
+                <button key={item.id} onClick={() => { setCurrentPage(item.id); setSelectedCategory(null); setSearchQuery(''); setFocusedCardIndex(0); setFocusZone('content'); }} style={{ padding: isMobile ? '8px 10px' : '12px 16px', background: isActive ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})` : 'transparent', border: isFocused ? `3px solid ${colors.primary}` : '3px solid transparent', outline: 'none', borderRadius: '10px', color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', cursor: 'pointer', fontWeight: 'bold', transform: isFocused ? 'scale(1.1)' : 'scale(1)', transition: 'all 0.2s', minWidth: isMobile ? '50px' : '80px', boxShadow: isFocused ? `0 0 20px ${colors.primary}` : 'none', flexShrink: 0 }}>
+                  <Icon size={isMobile ? 20 : 28} />
+                  {!isMobile && <span style={{ fontSize: '13px', textAlign: 'center' }}>{item.label}</span>}
                 </button>
               );
             })}
@@ -905,15 +915,15 @@ const MyDramaApp = () => {
         </header>
 
         <main style={{ 
-          padding: '40px 60px', 
-          paddingTop: currentPage === 'search' ? '280px' : '180px', 
+          padding: isMobile ? '20px' : '40px 60px', 
+          paddingTop: currentPage === 'search' ? (isMobile ? '150px' : '280px') : (isMobile ? '90px' : '180px'), 
           minHeight: '100vh' 
         }}>
-          {currentPage === 'home' && (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80px', marginBottom: '20px' }}><h1 style={{ fontSize: '38px', textShadow: '0 4px 20px rgba(0,0,0,0.9)', margin: 0 }}>Ultime uscite</h1></div>)}
+          {currentPage === 'home' && (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80px', marginBottom: '20px' }}><h1 style={{ fontSize: isMobile ? '28px' : '38px', textShadow: '0 4px 20px rgba(0,0,0,0.9)', margin: 0 }}>Ultime uscite</h1></div>)}
 
           {(currentPage === 'favorites' || (currentPage === 'history' && history.length === 0)) && (<div style={{ minHeight: '80px', marginBottom: '20px' }} />)}
 
-          {currentPage === 'search' && (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80px', marginBottom: '20px' }}><input type="text" placeholder="Cerca per titolo, genere o attore..." value={searchQuery} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)} style={{ width: '100%', maxWidth: '800px', padding: '25px', fontSize: '24px', background: 'rgba(26,26,26,0.9)', border: `3px solid ${colors.primary}`, borderRadius: '15px', color: 'white', outline: 'none' }} /></div>)}
+          {currentPage === 'search' && (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80px', marginBottom: '20px' }}><input type="text" placeholder="Cerca per titolo, genere o attore..." value={searchQuery} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)} style={{ width: '100%', maxWidth: '800px', padding: isMobile ? '15px' : '25px', fontSize: isMobile ? '16px' : '24px', background: 'rgba(26,26,26,0.9)', border: `3px solid ${colors.primary}`, borderRadius: '15px', color: 'white', outline: 'none' }} /></div>)}
 
           {currentPage === 'history' && history.length > 0 && (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80px', marginBottom: '20px' }}><button onClick={clearHistory} style={{ padding: '12px 24px', background: colors.primary, border: 'none', borderRadius: '10px', color: 'white', fontSize: '16px', cursor: 'pointer', fontWeight: 'bold' }}>Cancella Cronologia</button></div>)}
 
@@ -926,23 +936,23 @@ const MyDramaApp = () => {
             </div>
           )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '35px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(150px, 1fr))' : 'repeat(auto-fill, minmax(250px, 1fr))', gap: isMobile ? '20px' : '35px' }}>
             {getFilteredProjects().map((project: Project, index: number) => {
               const isFocused = focusZone === 'content' && focusedCardIndex === index;
               const isOnAir = project.generi.some(g => g.toLowerCase() === 'onair' || g.toLowerCase() === 'on air');
               return (
                 <div key={project.id_progetto} data-card-index={index} style={{ background: 'rgba(26,26,26,0.9)', borderRadius: '15px', overflow: 'hidden', cursor: 'pointer', transition: 'all 0.3s', transform: isFocused ? 'scale(1.15)' : 'scale(1)', boxShadow: isFocused ? `0 0 40px ${colors.primary}` : 'none', border: `3px solid ${isFocused ? colors.primary : 'transparent'}`, zIndex: isFocused ? 10 : 1 }} onClick={() => setSelectedProject(project)}>
                   <div style={{ position: 'relative' }}>
-                    <img src={project.url_poster_verticale} alt={project.titolo} style={{ width: '100%', height: '375px', objectFit: 'cover' }} />
-                    <button onClick={(e) => { e.stopPropagation(); toggleFavorite(project.id_progetto); }} style={{ position: 'absolute', top: '15px', left: '15px', background: 'rgba(0,0,0,0.8)', border: 'none', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 2 }}><Heart size={24} fill={favorites.includes(project.id_progetto) ? colors.primary : 'none'} color={favorites.includes(project.id_progetto) ? colors.primary : 'white'} /></button>
+                    <img src={project.url_poster_verticale} alt={project.titolo} style={{ width: '100%', height: isMobile ? 'auto' : '375px', objectFit: 'cover' }} />
+                    <button onClick={(e) => { e.stopPropagation(); toggleFavorite(project.id_progetto); }} style={{ position: 'absolute', top: '15px', left: '15px', background: 'rgba(0,0,0,0.8)', border: 'none', borderRadius: '50%', width: isMobile ? '40px' : '50px', height: isMobile ? '40px' : '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 2 }}><Heart size={isMobile ? 20 : 24} fill={favorites.includes(project.id_progetto) ? colors.primary : 'none'} color={favorites.includes(project.id_progetto) ? colors.primary : 'white'} /></button>
                   </div>
 
-                  <div style={{ padding: '20px' }}>
-                    <h3 style={{ fontSize: '20px', marginBottom: '12px', lineHeight: '1.3' }}>{project.titolo}</h3>
-                    <div style={{ fontSize: '14px', opacity: 0.7, marginBottom: '8px' }}>{project.macro_categoria} • {project.sub_categoria}</div>
+                  <div style={{ padding: isMobile ? '15px' : '20px' }}>
+                    <h3 style={{ fontSize: isMobile ? '16px' : '20px', marginBottom: '12px', lineHeight: '1.3' }}>{project.titolo}</h3>
+                    <div style={{ fontSize: isMobile ? '12px' : '14px', opacity: 0.7, marginBottom: '8px' }}>{project.macro_categoria} • {project.sub_categoria}</div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-                      <div style={{ fontSize: '14px', opacity: 0.7, flex: 1 }}>{project.generi.filter((g: string) => g.toLowerCase() !== 'onair' && g.toLowerCase() !== 'on air').slice(0, 2).join(', ')}{project.generi.filter((g: string) => g.toLowerCase() !== 'onair' && g.toLowerCase() !== 'on air').length > 2 && '...'}</div>
-                      {isOnAir && (<div style={{ color: '#FF0000', fontWeight: 'bold', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '1px' }}>ONAIR</div>)}
+                      <div style={{ fontSize: isMobile ? '12px' : '14px', opacity: 0.7, flex: 1 }}>{project.generi.filter((g: string) => g.toLowerCase() !== 'onair' && g.toLowerCase() !== 'on air').slice(0, 2).join(', ')}{project.generi.filter((g: string) => g.toLowerCase() !== 'onair' && g.toLowerCase() !== 'on air').length > 2 && '...'}</div>
+                      {isOnAir && (<div style={{ color: '#FF0000', fontWeight: 'bold', fontSize: isMobile ? '12px' : '16px', textTransform: 'uppercase', letterSpacing: '1px' }}>ONAIR</div>)}
                     </div>
                   </div>
                 </div>
@@ -950,10 +960,10 @@ const MyDramaApp = () => {
             })}
           </div>
 
-          {getFilteredProjects().length === 0 && (<div style={{ textAlign: 'center', padding: '80px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '30px' }}><img src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/No_Found_loop.gif" alt="Nessun contenuto" style={{ width: '300px', height: 'auto', borderRadius: '15px' }} /><p style={{ fontSize: '28px', fontWeight: 'bold', opacity: 0.8 }}>Ci dispiace, non c'è nulla da vedere qui</p></div>)}
+          {getFilteredProjects().length === 0 && (<div style={{ textAlign: 'center', padding: '80px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '30px' }}><img src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/No_Found_loop.gif" alt="Nessun contenuto" style={{ width: isMobile ? '200px' : '300px', height: 'auto', borderRadius: '15px' }} /><p style={{ fontSize: isMobile ? '20px' : '28px', fontWeight: 'bold', opacity: 0.8 }}>Ci dispiace, non c'è nulla da vedere qui</p></div>)}
         </main>
 
-        <footer style={{ padding: '20px 50px', textAlign: 'center', borderTop: '2px solid rgba(255,255,255,0.1)', marginTop: '80px', background: 'rgba(0,0,0,0.5)' }}><p style={{ opacity: 0.6, fontSize: '18px' }}>My Drama Life TV © 2025 all right reserved - Created by gswebagency.net</p></footer>
+        <footer style={{ padding: '20px 50px', textAlign: 'center', borderTop: '2px solid rgba(255,255,255,0.1)', marginTop: '80px', background: 'rgba(0,0,0,0.5)' }}><p style={{ opacity: 0.6, fontSize: isMobile ? '14px' : '18px' }}>My Drama Life TV © 2025 all right reserved - Created by gswebagency.net</p></footer>
       </div>
     </div>
   );
