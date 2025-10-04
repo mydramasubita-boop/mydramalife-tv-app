@@ -658,13 +658,21 @@ const MyDramaApp = () => {
               </div>
             </div>
 
-            {{playing.video_data.is_serie && playing.video_data.episodi && (
-              <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                {currentEpisode > 0 && (<button onClick={prevEpisode} style={{ padding: '18px 35px', background: 'rgba(0,0,0,0.8)', border: `2px solid ${colors.primary}`, borderRadius: '12px', color: 'white', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', cursor: 'pointer', fontWeight: 'bold' }}><SkipBack size={20} /> Precedente</button>)}
-                {currentEpisode < playing.video_data.episodi.length - 1 && (<button onClick={nextEpisode} style={{ padding: '18px 35px', background: 'rgba(0,0,0,0.8)', border: `2px solid ${colors.primary}`, borderRadius: '12px', color: 'white', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', cursor: 'pointer', fontWeight: 'bold' }}>Successivo <SkipForward size={20} /></button>)}
-              </div>
-            )}
-          </div>
+            {playing.video_data.is_serie && playing.video_data.episodi && (
+            <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              {currentEpisode > 0 && (
+                <button onClick={prevEpisode} style={{ padding: '18px 35px', background: 'rgba(0,0,0,0.8)', border: `2px solid ${colors.primary}`, borderRadius: '12px', color: 'white', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', cursor: 'pointer', fontWeight: 'bold' }}>
+                  <SkipBack size={20} /> Precedente
+                </button>
+              )}
+              {currentEpisode < playing.video_data.episodi.length - 1 && (
+                <button onClick={nextEpisode} style={{ padding: '18px 35px', background: 'rgba(0,0,0,0.8)', border: `2px solid ${colors.primary}`, borderRadius: '12px', color: 'white', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', cursor: 'pointer', fontWeight: 'bold' }}>
+                  Successivo <SkipForward size={20} />
+                </button>
+              )}
+            </div>
+          )}
+        </div>
 
           {showNextButton && playing.video_data.is_serie && playing.video_data.episodi && currentEpisode < playing.video_data.episodi.length - 1 && (
             <div style={{ position: 'absolute', bottom: '140px', right: '40px', pointerEvents: 'all' }}>
