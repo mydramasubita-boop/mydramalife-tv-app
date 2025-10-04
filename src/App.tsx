@@ -897,14 +897,14 @@ const MyDramaApp = () => {
         }
       `}</style>
       
-      <div style={{ position: 'relative', zIndex: 1, }}>
+      <div style={{ position: 'relative', zIndex: 1, paddingTop: '135px' }}>
   <header style={{ 
     position: 'fixed', 
     top: 0, 
     left: 0, 
     right: 0, 
     zIndex: 100, 
-    padding: '80px 60px 45px 60px',
+    padding: '18px 40px',
     display: 'flex', 
     alignItems: 'center', 
     justifyContent: 'space-between', 
@@ -931,7 +931,7 @@ const MyDramaApp = () => {
   </header>
 
   <main style={{ 
-    padding: '45px 60px', 
+    padding: '40px 60px', 
     paddingTop: '40px',
     minHeight: '100vh' 
   }}>
