@@ -718,11 +718,11 @@ const MyDramaApp = () => {
             <ChevronLeft size={32} /> Indietro
           </button>
 
-          <div style={{ display: 'flex', gap: '60px', marginBottom: '60px', flexWrap: 'wrap' }}>
-            <img src={selectedProject.url_poster_verticale} alt={selectedProject.titolo} style={{ width: '400px', height: '600px', objectFit: 'cover', borderRadius: '20px', boxShadow: `0 30px 80px rgba(255,20,147,0.5)` }} />
+          <div style={{ display: 'flex', gap: '60px', marginBottom: '60px', flexWrap: 'nowrap' }}>
+  <img src={selectedProject.url_poster_verticale} alt={selectedProject.titolo} style={{ width: '350px', height: '525px', objectFit: 'cover', borderRadius: '20px', boxShadow: `0 30px 80px rgba(255,20,147,0.5)`, flexShrink: 0 }} />
 
-            <div style={{ flex: 1, minWidth: '400px' }}>
-              <h1 style={{ fontSize: '64px', marginBottom: '30px', lineHeight: '1.2', textShadow: '0 4px 20px rgba(0,0,0,0.9)' }}>{selectedProject.titolo}</h1>
+  <div style={{ flex: 1, minWidth: '500px', overflow: 'auto' }}>
+    <h1 style={{ fontSize: '48px', marginBottom: '20px', lineHeight: '1.2', textShadow: '0 4px 20px rgba(0,0,0,0.9)' }}>{selectedProject.titolo}</h1>
               
               <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', flexWrap: 'wrap' }}>
                 {selectedProject.generi.map((genere: string, i: number) => (
