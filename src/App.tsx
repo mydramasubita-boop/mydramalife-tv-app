@@ -915,7 +915,7 @@ const MyDramaApp = () => {
   }}>
     <img src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/logo.svg" alt="My Drama Life" style={{ height: '55px', width: 'auto', flexShrink: 0 }} />
 
-    <nav style={{ display: 'flex', gap: '9px', alignItems: 'center', flex: 1, justifyContent: 'flex-end', overflowX: 'hidden' }}>
+    <nav style={{ display: 'flex', gap: '4px', alignItems: 'center', flex: 1, justifyContent: 'flex-end', overflowX: 'hidden' }}>
       {menuItems.map((item, index) => {
         const Icon = item.icon;
         const isFocused = focusZone === 'menu' && focusedMenu === index;
