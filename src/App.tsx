@@ -876,7 +876,7 @@ const MyDramaApp = () => {
   left: 0, 
   right: 0, 
   zIndex: 100, 
-  padding: '15px 40px',
+  padding: '25px 40px',
   display: 'flex', 
   alignItems: 'center', 
   justifyContent: 'space-between', 
@@ -903,7 +903,7 @@ const MyDramaApp = () => {
 </header>
 
         <main style={{ 
-  padding: '40px 60px', 
+  padding: '45px 60px', 
   paddingTop: currentPage === 'search' ? '200px' : '120px',
   minHeight: '100vh' 
 }}>
