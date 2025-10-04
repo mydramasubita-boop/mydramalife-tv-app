@@ -876,14 +876,14 @@ const MyDramaApp = () => {
   left: 0, 
   right: 0, 
   zIndex: 100, 
-  padding: '25px 40px',
+  padding: '5px 40px',
   display: 'flex', 
   alignItems: 'center', 
   justifyContent: 'space-between', 
   background: 'rgba(0,0,0,0.95)', 
   backdropFilter: 'blur(10px)', 
   borderBottom: `4px solid ${colors.primary}`,
-  height: '80px'
+  height: '100px'
 }}>
   <img src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/logo.svg" alt="My Drama Life" style={{ height: '50px', width: 'auto', flexShrink: 0 }} />
 
@@ -903,7 +903,7 @@ const MyDramaApp = () => {
 </header>
 
         <main style={{ 
-  padding: '45px 60px', 
+  padding: '40px 60px', 
   paddingTop: currentPage === 'search' ? '200px' : '120px',
   minHeight: '100vh' 
 }}>
