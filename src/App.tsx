@@ -897,8 +897,7 @@ const MyDramaApp = () => {
         }
       `}</style>
       
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        <div style={{ position: 'relative', zIndex: 1, paddingTop: '135px' }}>
+      <div style={{ position: 'relative', zIndex: 1, paddingTop: '135px' }}>
   <header style={{ 
     position: 'fixed', 
     top: 0, 
@@ -915,17 +914,28 @@ const MyDramaApp = () => {
     height: '95px'
   }}>
     <img src="https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/logo.svg" alt="My Drama Life" style={{ height: '55px', width: 'auto', flexShrink: 0 }} />
+
     <nav style={{ display: 'flex', gap: '9px', alignItems: 'center', flex: 1, justifyContent: 'flex-end', overflowX: 'hidden' }}>
-      {/* ... pulsanti menu ... */}
+      {menuItems.map((item, index) => {
+        const Icon = item.icon;
+        const isFocused = focusZone === 'menu' && focusedMenu === index;
+        const isActive = currentPage === item.id;
+        return (
+          <button key={item.id} onClick={() => { setCurrentPage(item.id); setSelectedCategory(null); setSearchQuery(''); setFocusedCardIndex(0); }} style={{ padding: '9px 13px', background: isActive ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})` : 'transparent', border: isFocused ? `3px solid ${colors.primary}` : '3px solid transparent', outline: 'none', borderRadius: '10px', color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', cursor: 'pointer', fontWeight: 'bold', transform: isFocused ? 'scale(1.05)' : 'scale(1)', transition: 'all 0.2s', minWidth: '68px', boxShadow: isFocused ? `0 0 20px ${colors.primary}` : 'none', flexShrink: 0 }}>
+            <Icon size={22} />
+            <span style={{ fontSize: '11px', textAlign: 'center', whiteSpace: 'nowrap' }}>{item.label}</span>
+          </button>
+        );
+      })}
     </nav>
   </header>
 
   <main style={{ 
     padding: '40px 60px', 
-    paddingTop: '40px',  
+    paddingTop: '40px',
     minHeight: '100vh' 
   }}>
-          {currentPage === 'home' && (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80px', marginBottom: '20px' }}><h1 style={{ fontSize: '38px', textShadow: '0 4px 20px rgba(0,0,0,0.9)', margin: 0 }}>Ultime uscite</h1></div>)}
+    {currentPage === 'home' && (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80px', marginBottom: '20px' }}><h1 style={{ fontSize: '38px', textShadow: '0 4px 20px rgba(0,0,0,0.9)', margin: 0 }}>Ultime uscite</h1></div>)}
 
           {(currentPage === 'favorites' || (currentPage === 'history' && history.length === 0)) && (<div style={{ minHeight: '80px', marginBottom: '20px' }} />)}
 
