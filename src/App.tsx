@@ -606,8 +606,8 @@ const MyDramaApp = () => {
               video.style.opacity = (timeLeft / 0.75).toString();
             }
           }}
-          onEnded(() => setLoading(false)}
-          onError(() => setLoading(false)}
+          onEnded={() => setLoading(false)}
+          onError={() => setLoading(false)}
         >
           <source src="/preloader.mp4" type="video/mp4" />
         </video>
