@@ -181,7 +181,7 @@ const MyDramaApp = () => {
               setSelectedProject(null);
               setDetailFocusZone('back');
               setDetailSubIndex(0);
-              setFocusZone('content');
+              setFocusZone('menu');
             } else if (detailFocusZone === 'genres') {
               const genre = selectedProject.generi[detailSubIndex];
               setSearchQuery(genre);
@@ -215,7 +215,7 @@ const MyDramaApp = () => {
             setSelectedProject(null);
             setDetailFocusZone('back');
             setDetailSubIndex(0);
-            setFocusZone('content');
+            setFocusZone('menu');
             break;
         }
         return;
@@ -659,20 +659,20 @@ const MyDramaApp = () => {
             </div>
 
             {playing.video_data.is_serie && playing.video_data.episodi && (
-            <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              {currentEpisode > 0 && (
-                <button onClick={prevEpisode} style={{ padding: '18px 35px', background: 'rgba(0,0,0,0.8)', border: `2px solid ${colors.primary}`, borderRadius: '12px', color: 'white', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', cursor: 'pointer', fontWeight: 'bold' }}>
-                  <SkipBack size={20} /> Precedente
-                </button>
-              )}
-              {currentEpisode < playing.video_data.episodi.length - 1 && (
-                <button onClick={nextEpisode} style={{ padding: '18px 35px', background: 'rgba(0,0,0,0.8)', border: `2px solid ${colors.primary}`, borderRadius: '12px', color: 'white', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', cursor: 'pointer', fontWeight: 'bold' }}>
-                  Successivo <SkipForward size={20} />
-                </button>
-              )}
-            </div>
-          )}
-        </div>
+              <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                {currentEpisode > 0 && (
+                  <button onClick={prevEpisode} style={{ padding: '18px 35px', background: 'rgba(0,0,0,0.8)', border: `2px solid ${colors.primary}`, borderRadius: '12px', color: 'white', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', cursor: 'pointer', fontWeight: 'bold' }}>
+                    <SkipBack size={20} /> Precedente
+                  </button>
+                )}
+                {currentEpisode < playing.video_data.episodi.length - 1 && (
+                  <button onClick={nextEpisode} style={{ padding: '18px 35px', background: 'rgba(0,0,0,0.8)', border: `2px solid ${colors.primary}`, borderRadius: '12px', color: 'white', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', cursor: 'pointer', fontWeight: 'bold' }}>
+                    Successivo <SkipForward size={20} />
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
 
           {showNextButton && playing.video_data.is_serie && playing.video_data.episodi && currentEpisode < playing.video_data.episodi.length - 1 && (
             <div style={{ position: 'absolute', bottom: '140px', right: '40px', pointerEvents: 'all' }}>
@@ -689,14 +689,14 @@ const MyDramaApp = () => {
   if (selectedProject) {
     return (
       <div style={{ width: '100%', minHeight: '100vh', background: `url(https://wh1373514.ispot.cc/wp/wp-content/MY%20DRAMA%20TV/FILEAPP/background.png)`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', color: 'white', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 200, overflowY: 'auto' }}>
-        <div style={{ position: 'relative', zIndex: 2, padding: '60px', paddingTop: '160px' }}>
+        <div style={{ position: 'relative', zIndex: 2, padding: '60px', paddingTop: '60px' }}>
           <button 
             data-detail-back="true"
             onClick={() => {
               setSelectedProject(null);
               setDetailFocusZone('back');
               setDetailSubIndex(0);
-              setFocusZone('content');
+              setFocusZone('menu');
             }} 
             style={{ 
               padding: '25px 45px', 
@@ -930,9 +930,11 @@ const MyDramaApp = () => {
           </nav>
         </header>
 
+        <div style={{ height: '95px' }} />
+
         <main style={{ 
           padding: '40px 60px', 
-          paddingTop: currentPage === 'search' ? '210px' : '135px',
+          paddingTop: '40px',
           minHeight: '100vh' 
         }}>
           {currentPage === 'home' && (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80px', marginBottom: '20px' }}><h1 style={{ fontSize: '38px', textShadow: '0 4px 20px rgba(0,0,0,0.9)', margin: 0 }}>Ultime uscite</h1></div>)}
